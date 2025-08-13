@@ -22,7 +22,7 @@
   - Write unit tests for authentication service and controller
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7_
 
-- [ ] 4. Create document management backend services
+- [x] 4. Create document management backend services
   - Implement Document entity and related DTOs
   - Create document service with CRUD operations
   - Build document controller with REST endpoints
@@ -30,7 +30,7 @@
   - Write unit tests for document service and controller
   - _Requirements: 2.1, 2.8, 5.1, 5.3, 5.4_
 
-- [ ] 5. Implement file upload and storage system
+- [x] 5. Implement file upload and storage system
   - Create file upload middleware with validation
   - Implement file service for secure file handling
   - Add file controller with upload endpoint
