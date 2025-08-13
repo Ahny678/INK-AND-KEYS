@@ -38,7 +38,7 @@
   - Write unit tests for file upload functionality
   - _Requirements: 2.2, 2.3, 2.4, 2.5, 2.6, 2.7_
 
-- [ ] 6. Build OCR processing service
+- [x] 6. Build OCR processing service
   - Create OCR service with Tesseract integration placeholder
   - Implement image preprocessing with OpenCV
   - Add OCR processing endpoint with status tracking
