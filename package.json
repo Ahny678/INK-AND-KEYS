@@ -1,0 +1,30 @@
+{
+  "name": "ink-and-keys",
+  "version": "1.0.0",
+  "description": "A productivity and workflow tool for writers combining document creation with OCR functionality",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "dev": "docker-compose up --build",
+    "dev:frontend": "npm run dev --workspace=frontend",
+    "dev:backend": "npm run dev --workspace=backend",
+    "build": "npm run build --workspace=frontend && npm run build --workspace=backend",
+    "test": "npm run test --workspace=frontend && npm run test --workspace=backend",
+    "clean": "docker-compose down -v && docker system prune -f"
+  },
+  "keywords": [
+    "writing",
+    "ocr",
+    "documents",
+    "productivity"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  }
+}
