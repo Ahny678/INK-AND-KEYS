@@ -61,4 +61,20 @@ I wanted clarity on whether storing files locally was an intentional design deci
 **Impact:**
 This answer helped me realize I don’t need cloud storage for this hackathon project — local ephemeral storage is fine since files are discarded after processing. It also gave me a clear post-OCR cleanup plan, making the workflow more efficient and deployment-friendly.
 
+Here’s how I’d rewrite that entry so it feels like part of a hackathon diary while still hitting all the “Prompt / Why / Output / Impact” beats the judges like:
+
+---
+
+## 2025-08-13 — Locking in the Vision
+
+I hadn’t even touched a line of frontend code yet, but I knew this: if I didn’t nail the design system early, the rest of the build would be chaos. So I told Kiro,
+
+> *“Before we begin with the frontend, process and remember the design specs for how the UI should look. Store this in a specs file for reference.”*
+
+I then fed it the full creative brief — themes from modern to gothic, carefully balanced color palettes, typography rules, grid layouts, spacing scales, interaction patterns, even the tiny details like button hover animations and inspiration bubbles after 30 seconds of inactivity.
+
+Kiro didn’t just acknowledge it — it **created `ui-design-specs.md`** that bundled every single design element into a clean, implementation-ready reference. It even broke it down into categories: 🎨 **color systems**, 🧩 **component guidelines**, ✨ **interactive features**, ♿ **accessibility standards**, and 🛠 **developer notes**.
+
+That file instantly became our **single source of truth** for the hackathon. Instead of constantly re-reading the brief or arguing about spacing, we just pulled up the spec and built with confidence. Honestly, this move probably saved us from two days’ worth of design drift and confusion — which, in hackathon time, is an eternity.
+
  

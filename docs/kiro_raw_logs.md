@@ -1983,3 +1983,314 @@ Requirements Satisfied:
 3.6: Database storage of extracted text ✅
 3.7: Immediate editing capability ✅
 The OCR service is now fully functional and ready to process uploaded images, extract text, and create editable documents for users!
+
+NEXT PROMPT
+
+Before we begin with the frontend, process and remember the design specs for how the UI should look. Here is the overview. Keep these information stored in a specs file for reference.
+
+1. Brand Overview
+
+Mission:
+
+Create a digital writing space that adapts to the user's creative mood — whether modern, vintage, playful, professional, cottagecore, or gothic — while maintaining focus, inspiration, and delight.
+
+Core Values:
+
+Personalization
+
+Immersive creativity
+
+Minimal distraction, maximum imagination
+
+2. Color System
+
+2.1 Core Palette
+
+These colors form the foundation for all modes.
+
+All colors meet WCAG AA contrast ratios for text and background combinations.
+
+Name	Hex	RGB	Usage
+
+Ink Black	#1A1A1A	(26, 26, 26)	Text on light backgrounds, dark mode base
+
+Parchment White	#F9F6F0	(249, 246, 240)	Light mode background
+
+Accent Red	#D96459	(217, 100, 89)	CTAs, highlights, active states
+
+Golden Tan	#C99E6F	(201, 158, 111)	Borders, secondary accents
+
+Soft Gray	#ECECEC	(236, 236, 236)	Neutral backgrounds, dividers
+
+2.2 Theme Variations
+
+Default Light Mode
+
+Background: #FFFDFC (255, 253, 252)
+
+Primary Text: #2A2A2A (42, 42, 42)
+
+Secondary Text: #555555 (85, 85, 85)
+
+Primary Accent: #D96459
+
+Borders: #E6E6E6
+
+Default Dark Mode
+
+Background: #0E0E0E (14, 14, 14)
+
+Primary Text: #F5F5F5 (245, 245, 245)
+
+Secondary Text: #CCCCCC (204, 204, 204)
+
+Primary Accent: #A77979
+
+Borders: #333333
+
+Modern
+
+Primary: #2E3440 (46, 52, 64)
+
+Accent: #88C0D0 (136, 192, 208)
+
+Highlight: #D08770 (208, 135, 112)
+
+Background: #ECEFF4 (236, 239, 244)
+
+Vintage
+
+Primary: #E7D8C9 (231, 216, 201)
+
+Accent: #B2967D (178, 150, 125)
+
+Highlight: #85586F (133, 88, 111)
+
+Background: #F5E8DF (245, 232, 223)
+
+Playful
+
+Primary: #FFF3B0 (255, 243, 176)
+
+Accent: #E07A5F (224, 122, 95)
+
+Highlight: #3D405B (61, 64, 91)
+
+Background: #F2CC8F (242, 204, 143)
+
+Cottagecore
+
+Primary: #F2E8CF (242, 232, 207)
+
+Accent: #A3B18A (163, 177, 138)
+
+Highlight: #588157 (88, 129, 87)
+
+Background: #F5F3E7 (245, 243, 231)
+
+Goth
+
+Primary: #0B0B0B (11, 11, 11)
+
+Accent: #3A3A3A (58, 58, 58)
+
+Highlight: #B30059 (179, 0, 89)
+
+Background: #151515 (21, 21, 21)
+
+Do’s
+
+✔ Use theme background + text combinations as defined.
+
+✔ Maintain accessible contrast (≥ 4.5:1).
+
+✔ Use accent colors sparingly to emphasize key actions.
+
+Don’ts
+
+✘ Use more than 2 accent colors in a single view.
+
+✘ Place accent text on accent backgrounds without contrast check.
+
+3. Typography System
+
+3.1 Font Families
+
+Headings / Creative Accents:
+
+Theme-specific decorative serif or script fonts.
+
+Modern: Playfair Display
+
+Vintage: Cormorant Garamond
+
+Playful: Pacifico or Fredoka
+
+Cottagecore: Quicksand
+
+Goth: Cinzel Decorative
+
+Body / Paragraphs:
+
+Inter, Merriweather, or IBM Plex Serif (theme-dependent).
+
+3.2 Font Sizes
+
+Role	Size (px)	Weight	Line Height	Usage
+
+H1	48	700	1.2	Page title
+
+H2	36	600	1.3	Section title
+
+H3	28	500	1.3	Subsection
+
+Body Large	18	400	1.5	Reading text
+
+Body Small	16	400	1.5	Secondary text
+
+Caption	14	400	1.4	Metadata, labels
+
+Do’s
+
+✔ Keep body font size ≥16px for readability.
+
+✔ Use heading fonts only for titles, not long paragraphs.
+
+Don’ts
+
+✘ Mix more than 2 font families on one page.
+
+✘ Overuse decorative fonts for small text.
+
+4. Spacing & Grid System
+
+4.1 Spacing Scale (8px base unit)
+
+4px (XXS) → 8px (XS) → 16px (S) → 24px (M) → 32px (L) → 48px (XL) → 64px (XXL)
+
+Rules:
+
+Vertical rhythm: multiples of 8px.
+
+Horizontal padding inside components: at least 16px.
+
+4.2 Grid
+
+Desktop: 12-column grid, 72px margins, 24px gutters.
+
+Tablet: 8-column grid, 32px margins, 16px gutters.
+
+Mobile: 4-column grid, 16px margins, 16px gutters.
+
+5. Component Guidelines
+
+5.1 Buttons
+
+Primary: Solid accent background, white text, rounded 8px.
+
+Secondary: Outline style with 2px border, text in accent color.
+
+States:
+
+Hover: Slight scale-up (1.05x), subtle shadow.
+
+Active: Scale-down (0.98x), deeper shadow.
+
+Disabled: 50% opacity, no shadow.
+
+Do’s
+
+✔ Maintain consistent button heights.
+
+✔ Use primary buttons for main actions per screen.
+
+Don’ts
+
+✘ Place two primary buttons next to each other.
+
+5.2 Writing Canvas
+
+Background: Theme background or parchment texture.
+
+Text Alignment: Left by default, justified optional.
+
+Margins: 48px left/right on desktop, 24px on mobile.
+
+5.3 OCR Upload
+
+Drag-and-drop area styled as an open sketchbook.
+
+Dashed border in accent color.
+
+Hover animation: doodles appear along the edges.
+
+5.4 Navigation
+
+Persistent top nav for primary actions.
+
+Floating chapter ribbon on right side for quick navigation.
+
+6. Interaction Patterns (can toggle on or off)
+
+Ink Flow Animation
+
+Trigger: On typing, a faint ink line appears under each new word and fades in 1s.
+
+Idea Sparks Mode
+
+Trigger: No typing for 30s → Fade-in inspiration bubble with dismiss option.
+
+Story Threads
+
+Trigger: Highlighted text expands a side panel linked with a connecting line.
+
+7. Accessibility
+
+All clickable areas ≥44x44px.
+
+Text contrast ratio ≥4.5:1.
+
+Provide motion-reduction option for animations.
+
+Kiro
+I see you're working on a task that's optimized for spec sessions. Would you like to start a dedicated spec session for the best experience?
+
+Yes
+
+Perfect! I'll create a comprehensive UI design specification file to store all these design details for reference during frontend development.
+
+Created
+
+ui-design-specs.md
+
+
+Perfect! I've created a comprehensive UI design specification file that captures all the design details you provided. This will serve as our reference document for frontend development.
+
+✅ UI Design Specs Stored
+The specification includes:
+
+🎨 Complete Design System
+7 Theme Variations: Default Light/Dark, Modern, Vintage, Playful, Cottagecore, Goth
+Comprehensive Color Palette: Core colors + theme-specific variations
+Typography System: Theme-specific fonts with proper sizing hierarchy
+Spacing & Grid: 8px base unit system with responsive breakpoints
+🧩 Component Guidelines
+Button States & Styles: Primary/secondary with hover/active/disabled states
+Writing Canvas: Theme-aware backgrounds with proper margins
+OCR Upload: Sketchbook-style drag-and-drop with doodle animations
+Navigation: Top nav + floating chapter ribbon
+✨ Interactive Features
+Ink Flow Animation: Typing effects with fading ink lines
+Idea Sparks Mode: Inspiration bubbles after inactivity
+Story Threads: Highlighted text with side panel connections
+♿ Accessibility Standards
+WCAG AA compliance (4.5:1 contrast ratio)
+44x44px minimum touch targets
+Motion reduction options
+Screen reader support
+🛠 Implementation Ready
+CSS custom properties structure
+Theme switching guidelines
+Responsive breakpoints
+Component usage rules
+This design specification will guide all frontend development to ensure we create a cohesive, beautiful, and accessible writing experience that adapts to users' creative moods!
