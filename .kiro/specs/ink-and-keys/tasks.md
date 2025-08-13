@@ -7,14 +7,14 @@
   - Create Docker Compose setup for development environment
   - _Requirements: 6.1, 6.2, 6.3_
 
-- [ ] 2. Initialize backend NestJS application with core modules
+- [x] 2. Initialize backend NestJS application with core modules
   - Generate NestJS application with CLI
   - Set up Prisma ORM with PostgreSQL connection
   - Create database schema for User, Document, and UploadedFile models
   - Configure environment variables and validation
   - _Requirements: 6.4, 6.5_
 
-- [ ] 3. Implement user authentication system
+- [x] 3. Implement user authentication system
   - Create User entity and authentication DTOs
   - Implement JWT authentication service with bcrypt password hashing
   - Create auth controller with register, login, logout endpoints
