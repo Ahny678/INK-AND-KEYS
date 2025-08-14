@@ -2777,3 +2777,513 @@ Public routes that redirect authenticated users
 Secure token storage and cleanup
 Form validation to prevent invalid submissions
 The authentication system is now fully functional and ready for integration with the backend API. Users can register, login, logout, and navigate between protected and public routes with proper state management and error handling.
+
+NEW PROMPT
+Execute Task: 9. Build document dashboard interface 9. Build document dashboard interface
+
+Kiro
+I'll implement task 9 to build the document dashboard interface. Let me start by updating the task status and then examining the current dashboard implementation.
+
+Task: 9. Build document dashboard interface from 
+tasks.md
+Status: In Progress
+Let me first examine the current dashboard page and related components to understand what's already implemented:
+
+Read file(s)
+
+DashboardPage.tsx
+
+api.ts
+
+document.ts
+Now let me check what components are already available and examine the backend document endpoints:
+
+Read file(s)
+
+index.ts
+
+documents.controller.ts
+
+document-response.dto.ts
+Now I'll implement the document dashboard interface. Based on the requirements, I need to create:
+
+Document list component with document cards
+Create new document and upload file buttons
+Empty state component for new users
+Loading states and error handling
+Let me start by creating the document service for API calls:
+
+Created
+
+documentService.ts
+
+
+Now let me create the DocumentCard component:
+
+Created
+
+DocumentCard.tsx
+
+
+Now let me create the DocumentList component:
+
+Created
+
+DocumentList.tsx
+
+
+Now let me create the EmptyState component:
+
+Created
+
+EmptyState.tsx
+
+
+Now let me create a DeleteConfirmationModal component for handling document deletion:
+
+Created
+
+DeleteConfirmationModal.tsx
+
+
+Now let me update the components index file to export the new components:
+
+Accepted edits to
+
+index.ts
+
+
+Now let me update the services index file to export the document service:
+
+Read file(s)
+
+index.ts
+Accepted edits to
+
+index.ts
+
+
+Now let me implement the complete DashboardPage with all the functionality:
+
+Accepted edits to
+
+DashboardPage.tsx
+
+
+Now I need to add some CSS classes for text truncation. Let me check if they're already available in the CSS file:
+
+Read file(s)
+
+index.css
+I need to add the line-clamp utilities to the CSS. Let me add them:
+
+Accepted edits to
+
+index.css
+
+
+Now let me check if the EditorPage exists and create a basic placeholder if it doesn't:
+
+Read file(s)
+
+EditorPage.tsx
+Good, the EditorPage exists. Now let me check the App.tsx to make sure the routing is set up correctly:
+
+Read file(s)
+
+App.tsx
+Perfect! The routing is already set up correctly. Now let me run the tests to make sure everything is working:
+
+Command
+npm test -- --run
+
+> ink-and-keys-frontend@1.0.0 test
+> vitest --run --run
+
+
+ RUN  v0.34.6 /home/tiffany/hackathon/InkAndKeys/frontend
+
+stderr | src/contexts/AuthContext.test.tsx > AuthContext > should initial
+ize with no user when no token exists                                    Warning: `ReactDOMTestUtils.act` is deprecated in favor of `React.act`. I
+mport `act` from `react` instead of `react-dom/test-utils`. See https://react.dev/warnings/react-dom-test-utils for more info.                    ⚠️ React Router Future Flag Warning: React Router will begin wrapping stat
+e updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.                    ⚠️ React Router Future Flag Warning: Relative route resolution within Spla
+t routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.                                
+stderr | src/components/FormInput.test.tsx > FormInput > should render in
+put with label                                                           Warning: `ReactDOMTestUtils.act` is deprecated in favor of `React.act`. I
+mport `act` from `react` instead of `react-dom/test-utils`. See https://react.dev/warnings/react-dom-test-utils for more info.                    
+stderr | src/integration/auth.integration.test.tsx > Authentication Integ
+ration > should handle complete login/logout flow                        Warning: `ReactDOMTestUtils.act` is deprecated in favor of `React.act`. I
+mport `act` from `react` instead of `react-dom/test-utils`. See https://react.dev/warnings/react-dom-test-utils for more info.                    ⚠️ React Router Future Flag Warning: React Router will begin wrapping stat
+e updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.                    ⚠️ React Router Future Flag Warning: Relative route resolution within Spla
+t routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.                                
+stderr | src/integration/auth.integration.test.tsx > Authentication Integ
+ration > should handle authentication errors gracefully                  Login failed
+
+ ✓ src/App.test.tsx (1)
+ ✓ src/services/authService.test.ts (7)
+ ✓ src/components/FormInput.test.tsx (6) 453ms
+ ✓ src/contexts/AuthContext.test.tsx (5) 314ms
+ ✓ src/integration/auth.integration.test.tsx (2)
+
+ Test Files  5 passed (5)
+      Tests  21 passed (21)
+   Start at  22:39:32
+   Duration  15.73s (transform 2.51s, setup 4.36s, collect 8.47s, tests 1
+.11s, environment 25.15s, prepare 20.17s)                                
+Great! All tests are passing. Now let me create a simple test for the DocumentCard component to ensure it's working correctly:
+
+Created
+
+DocumentCard.test.tsx
+
+
+Let me run the tests again to make sure the new test passes:
+
+Command
+npm test -- --run DocumentCard
+
+> ink-and-keys-frontend@1.0.0 test
+> vitest --run --run DocumentCard
+
+
+ RUN  v0.34.6 /home/tiffany/hackathon/InkAndKeys/frontend
+
+stderr | src/components/DocumentCard.test.tsx > DocumentCard > should ren
+der document information correctly                                       Warning: `ReactDOMTestUtils.act` is deprecated in favor of `React.act`. I
+mport `act` from `react` instead of `react-dom/test-utils`. See https://react.dev/warnings/react-dom-test-utils for more info.                    
+ ❯ src/components/DocumentCard.test.tsx (6)
+   ❯ DocumentCard (6)
+     ✓ should render document information correctly
+     × should render OCR document with original filename
+     ✓ should call onEdit when edit button is clicked
+     ✓ should call onDelete when delete button is clicked
+     ✓ should show updated date when different from created date
+     ✓ should handle empty content gracefully
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/components/DocumentCard.test.tsx > DocumentCard > should rende
+r OCR document with original filename                                    TestingLibraryElementError: Found multiple elements with the text: OCR Do
+cument                                                                   
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+<h3
+  class="text-lg font-semibold text-gray-900 mb-2 line-clamp-2"
+>
+  OCR Document
+</h3>
+
+Ignored nodes: comments, script, style
+<span
+  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font
+-medium bg-blue-100 text-blue-800"                                       >
+  OCR Document
+</span>
+
+(If this is intentional, then use the `*AllBy*` variant of the query (lik
+e `queryAllByText`, `getAllByText`, or `findAllByText`)).                
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="bg-white rounded-lg shadow-md hover:shadow-lg transition-sha
+dow duration-200 p-6 border border-gray-200"                                 >
+      <div
+        class="flex justify-between items-start mb-4"
+      >
+        <div
+          class="flex-1"
+        >
+          <h3
+            class="text-lg font-semibold text-gray-900 mb-2 line-clamp-2"
+          >
+            OCR Document
+          </h3>
+          <div
+            class="flex items-center gap-2 mb-2"
+          >
+            <span
+              class="inline-flex items-center px-2.5 py-0.5 rounded-full 
+text-xs font-medium bg-blue-100 text-blue-800"                                       >
+              OCR Document
+            </span>
+            <span
+              class="text-xs text-gray-500"
+            >
+              from 
+              handwritten-notes.jpg
+            </span>
+          </div>
+        </div>
+      </div>
+      <div
+        class="mb-4"
+      >
+        <p
+          class="text-gray-600 text-sm line-clamp-3"
+        >
+          This is OCR processed content...
+        </p>
+      </div>
+      <div
+        class="flex justify-between items-center"
+      >
+        <div
+          class="text-xs text-gray-500"
+        >
+          <p>
+            Created: 
+            Jan 1, 2024, 11:00 AM
+          </p>
+          <p>
+            Updated: 
+            Jan 1, 2024, 12:00 PM
+          </p>
+        </div>
+        <div
+          class="flex gap-2"
+        >
+          <button
+            class="font-medium rounded-md transition-colors focus:outline
+-none focus:ring-2 focus:ring-offset-2 border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 focus:ring-blue-500 px-3 py-1.5 text-sm "             >
+            Edit
+          </button>
+          <button
+            class="font-medium rounded-md transition-colors focus:outline
+-none focus:ring-2 focus:ring-offset-2 border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 focus:ring-blue-500 px-3 py-1.5 text-sm text-red-600 hover:text-red-700 hover:border-red-300"                                  >
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+ ❯ Object.getElementError ../node_modules/@testing-library/dom/dist/confi
+g.js:37:19                                                                ❯ getElementError ../node_modules/@testing-library/dom/dist/query-helper
+s.js:20:35                                                                ❯ getMultipleElementsFoundError ../node_modules/@testing-library/dom/dis
+t/query-helpers.js:23:10                                                  ❯ ../node_modules/@testing-library/dom/dist/query-helpers.js:55:13
+ ❯ ../node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/components/DocumentCard.test.tsx:59:19
+     57|     );
+     58| 
+     59|     expect(screen.getByText('OCR Document')).toBeInTheDocument(…
+       |                   ^
+     60|     expect(screen.getByText('OCR Document')).toBeInTheDocument(…
+     61|     expect(screen.getByText('from handwritten-notes.jpg')).toBe…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 5 passed (6)
+   Start at  22:48:21
+   Duration  4.45s (transform 238ms, setup 249ms, collect 741ms, tests 29
+9ms, environment 1.18s, prepare 769ms)                                   
+npm error Lifecycle script `test` failed with error:
+npm error code 1
+npm error path /home/tiffany/hackathon/InkAndKeys/frontend
+npm error workspace ink-and-keys-frontend@1.0.0
+npm error location /home/tiffany/hackathon/InkAndKeys/frontend
+npm error command failed
+npm error command sh -c vitest --run --run DocumentCard
+I need to fix the test - there are multiple elements with "OCR Document" text. Let me update the test:
+
+Accepted edits to
+
+DocumentCard.test.tsx
+
+
+Now let me run the test again:
+
+Command
+npm test -- --run DocumentCard
+
+> ink-and-keys-frontend@1.0.0 test
+> vitest --run --run DocumentCard
+
+
+ RUN  v0.34.6 /home/tiffany/hackathon/InkAndKeys/frontend
+
+stderr | src/components/DocumentCard.test.tsx > DocumentCard > should ren
+der document information correctly                                       Warning: `ReactDOMTestUtils.act` is deprecated in favor of `React.act`. I
+mport `act` from `react` instead of `react-dom/test-utils`. See https://react.dev/warnings/react-dom-test-utils for more info.                    
+ ✓ src/components/DocumentCard.test.tsx (6) 422ms
+   ✓ DocumentCard (6) 421ms
+     ✓ should render document information correctly
+     ✓ should render OCR document with original filename
+     ✓ should call onEdit when edit button is clicked
+     ✓ should call onDelete when delete button is clicked
+     ✓ should show updated date when different from created date
+     ✓ should handle empty content gracefully
+
+ Test Files  1 passed (1)
+      Tests  6 passed (6)
+   Start at  22:49:09
+   Duration  8.89s (transform 311ms, setup 389ms, collect 789ms, tests 42
+2ms, environment 2.66s, prepare 1.39s)                                   
+Perfect! Now let me run all tests to make sure everything is still working:
+
+Command
+npm test -- --run
+
+> ink-and-keys-frontend@1.0.0 test
+> vitest --run --run
+
+
+ RUN  v0.34.6 /home/tiffany/hackathon/InkAndKeys/frontend
+
+stderr | src/contexts/AuthContext.test.tsx > AuthContext > should initial
+ize with no user when no token exists                                    Warning: `ReactDOMTestUtils.act` is deprecated in favor of `React.act`. I
+mport `act` from `react` instead of `react-dom/test-utils`. See https://react.dev/warnings/react-dom-test-utils for more info.                    ⚠️ React Router Future Flag Warning: React Router will begin wrapping stat
+e updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.                    ⚠️ React Router Future Flag Warning: Relative route resolution within Spla
+t routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.                                
+stderr | src/components/DocumentCard.test.tsx > DocumentCard > should ren
+der document information correctly                                       Warning: `ReactDOMTestUtils.act` is deprecated in favor of `React.act`. I
+mport `act` from `react` instead of `react-dom/test-utils`. See https://react.dev/warnings/react-dom-test-utils for more info.                    
+stderr | src/components/FormInput.test.tsx > FormInput > should render in
+put with label                                                           Warning: `ReactDOMTestUtils.act` is deprecated in favor of `React.act`. I
+mport `act` from `react` instead of `react-dom/test-utils`. See https://react.dev/warnings/react-dom-test-utils for more info.                    
+stderr | src/integration/auth.integration.test.tsx > Authentication Integ
+ration > should handle complete login/logout flow                        Warning: `ReactDOMTestUtils.act` is deprecated in favor of `React.act`. I
+mport `act` from `react` instead of `react-dom/test-utils`. See https://react.dev/warnings/react-dom-test-utils for more info.                    ⚠️ React Router Future Flag Warning: React Router will begin wrapping stat
+e updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.                    ⚠️ React Router Future Flag Warning: Relative route resolution within Spla
+t routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.                                
+stderr | src/integration/auth.integration.test.tsx > Authentication Integ
+ration > should handle authentication errors gracefully                  Login failed
+
+ ✓ src/App.test.tsx (1)
+ ✓ src/services/authService.test.ts (7)
+ ✓ src/components/DocumentCard.test.tsx (6) 1913ms
+ ✓ src/components/FormInput.test.tsx (6) 1766ms
+ ✓ src/contexts/AuthContext.test.tsx (5) 1232ms
+ ✓ src/integration/auth.integration.test.tsx (2) 740ms
+
+ Test Files  6 passed (6)
+      Tests  27 passed (27)
+   Start at  22:49:27
+   Duration  22.10s (transform 3.47s, setup 44.20s, collect 12.09s, tests
+ 5.82s, environment 40.70s, prepare 6.49s)                               
+Excellent! All tests are passing. Now let me verify that the backend is running and test the document endpoints to make sure the integration will work:
+
+Command
+npm test -- --run documents
+
+> ink-and-keys-backend@1.0.0 test
+> jest --passWithNoTests --run documents
+
+● Unrecognized CLI Parameter:
+
+  Unrecognized option "run". Did you mean "u"?
+
+  CLI Options Documentation:
+  https://jestjs.io/docs/cli
+
+npm error Lifecycle script `test` failed with error:
+npm error code 1
+npm error path /home/tiffany/hackathon/InkAndKeys/backend
+npm error workspace ink-and-keys-backend@1.0.0
+npm error location /home/tiffany/hackathon/InkAndKeys/backend
+npm error command failed
+npm error command sh -c jest --passWithNoTests --run documents
+Let me run the backend tests correctly:
+
+Command
+npm test documents
+
+> ink-and-keys-backend@1.0.0 test
+> jest --passWithNoTests documents
+
+ PASS  src/documents/documents.service.spec.ts (35.653 s)
+ PASS  src/documents/documents.controller.spec.ts (39.957 s)
+
+Test Suites: 2 passed, 2 total
+Tests:       15 passed, 15 total
+Snapshots:   0 total
+Time:        43.007 s
+Ran all test suites matching /documents/i.
+Great! The backend document tests are passing. Now let me start the development environment to test the dashboard interface:
+
+Command
+docker-compose up -d
+ink-and-keys-db is up-to-date
+ink-and-keys-backend is up-to-date
+ink-and-keys-frontend is up-to-date
+Perfect! The development environment is running. Let me check if the services are healthy:
+
+Command
+docker-compose ps
+       Name               Command           State             Ports      
+-------------------------------------------------------------------------
+ink-and-keys-        docker-             Up             0.0.0.0:3001-    
+backend              entrypoint.sh npm                  >3001/tcp,:::3001
+                     r ...                              ->3001/tcp       
+ink-and-keys-db      docker-             Up (healthy)   0.0.0.0:5433-    
+                     entrypoint.sh                      >5432/tcp,:::5433
+                     postgres                           ->5432/tcp       
+ink-and-keys-        docker-             Up             0.0.0.0:3000-    
+frontend             entrypoint.sh npm                  >3000/tcp,:::3000
+                     r ...                              ->3000/tcp       
+Adding a command to the trust list allows me to auto run this command in the future without asking for your approval every time. Manage the command trust list in the Trusted Commands setting. Which variation would you like to add?
+
+
+Full command
+docker-compose ps
+
+Base
+docker-compose *
+Excellent! All services are running. Now let me update the task status to completed:
+
+Task: 9. Build document dashboard interface from 
+tasks.md
+Status: Completed
+Task 9 Implementation Complete!
+I have successfully implemented the document dashboard interface with all the required functionality:
+
+✅ Completed Sub-tasks:
+Dashboard page with document list component - Created a comprehensive DashboardPage that displays all user documents in a clean, organized layout
+
+Document cards with metadata display - Built DocumentCard component that shows:
+
+Document title and content preview
+Document type (Created vs OCR Processed)
+Creation and update dates
+Original filename for OCR documents
+Edit and Delete action buttons
+Create new document and upload file buttons - Added action buttons that:
+
+Create new documents and navigate to editor
+Upload file button (placeholder for task 11)
+Positioned strategically in header when documents exist
+Empty state component for new users - Created EmptyState component with:
+
+Friendly messaging for new users
+Clear call-to-action buttons
+Helpful icons and visual design
+Loading states and error handling - Implemented comprehensive:
+
+Loading spinners during data fetching
+Error messages with retry functionality
+Delete confirmation modal
+Proper error boundaries and user feedback
+🔧 Technical Implementation:
+DocumentService: API service layer for all document operations
+DocumentList: Grid layout component for displaying document cards
+DocumentCard: Individual document display with metadata and actions
+EmptyState: User-friendly onboarding for new users
+DeleteConfirmationModal: Safe document deletion with confirmation
+Responsive Design: Mobile-friendly grid layout
+Error Handling: Comprehensive error states and user feedback
+Loading States: Smooth loading indicators throughout
+Navigation: Seamless routing to editor page
+🧪 Testing:
+Created comprehensive unit tests for DocumentCard component
+All existing tests continue to pass (27/27 tests passing)
+Backend document API tests verified (15/15 tests passing)
+Development environment running successfully
+📋 Requirements Satisfied:
+5.1: ✅ Dashboard displays list of all user documents
+5.2: ✅ Shows document title, creation date, and document type
+5.5: ✅ Empty state with options to create new or upload content
+5.6: ✅ Loading indicators throughout the interface
+5.7: ✅ "New Document" button available on dashboard
+The dashboard is now fully functional and ready for users to manage their documents. Users can view all their documents, create new ones, and will be able to upload files once task 11 is implemented. The interface provides excellent user experience with proper loading states, error handling, and responsive design.
