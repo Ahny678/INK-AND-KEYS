@@ -11,3 +11,4 @@ export { DocumentCard } from './DocumentCard';
 export { DocumentList } from './DocumentList';
 export { EmptyState } from './EmptyState';
 export { DeleteConfirmationModal } from './DeleteConfirmationModal';
+export { RichTextEditor } from './RichTextEditor';

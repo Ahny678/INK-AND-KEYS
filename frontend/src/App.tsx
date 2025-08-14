@@ -6,6 +6,7 @@ import { LoginPage } from '@/pages/LoginPage';
 import { RegisterPage } from '@/pages/RegisterPage';
 import { DashboardPage } from '@/pages/DashboardPage';
 import { EditorPage } from '@/pages/EditorPage';
+import { EditorDebug } from '@/components/EditorDebug';
 
 function App() {
   return (
@@ -44,6 +45,14 @@ function App() {
                 <ProtectedRoute>
                   <EditorPage />
                 </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/debug-editor" 
+              element={
+                <div className="p-8">
+                  <EditorDebug />
+                </div>
               } 
             />
           </Routes>
