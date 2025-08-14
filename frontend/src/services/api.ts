@@ -30,7 +30,12 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       // Handle unauthorized access
       localStorage.removeItem('auth_token');
-      window.location.href = '/login';
+      // Only redirect if we're not already on a public page
+      if (!window.location.pathname.includes('/login') && 
+          !window.location.pathname.includes('/register') &&
+          !window.location.pathname.includes('/')) {
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }

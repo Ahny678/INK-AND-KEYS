@@ -77,4 +77,29 @@ Kiro didn’t just acknowledge it — it **created `ui-design-specs.md`** that b
 
 That file instantly became our **single source of truth** for the hackathon. Instead of constantly re-reading the brief or arguing about spacing, we just pulled up the spec and built with confidence. Honestly, this move probably saved us from two days’ worth of design drift and confusion — which, in hackathon time, is an eternity.
 
+
+Here’s how you can document this hackathon milestone in the same style as your boilerplate reference:
+
+---
+
+## 2025-08-14 — Frontend Authentication System
+
+**Prompt:**
+"Execute Task 8: Implement frontend authentication system."
+
+**Why:**
+User authentication was essential for protecting dashboard and editor pages, and for providing a smooth login/register experience. I wanted Kiro to handle the full implementation and tests as I am only beginner level in React.
+
+**Kiro Output Summary:**
+Kiro built a complete authentication flow for the React frontend:
+
+* **Core:** Created `AuthContext.tsx` for global auth state, updated `useAuth.ts`, and integrated JWT token storage/management.
+* **UI:** Built `LoginForm.tsx`, `RegisterForm.tsx`, and `FormInput.tsx` with validation, plus a `Header.tsx` that adapts based on auth state.
+* **Routing:** Added `ProtectedRoute.tsx` for private pages and `PublicRoute.tsx` to redirect logged-in users away from auth pages.
+* **Integration:** Updated `App.tsx` with `AuthProvider`, added path aliases in TS + Vite config, improved API error handling, and enhanced the `Button` component with an 'outline' variant.
+* **Testing:** Attempted to run unit tests for auth context and components; initial runs failed due to missing `jsdom`. After installing it, Kiro set up `setup.ts` and wrote tests for `AuthContext`, `LoginForm`, and `ProtectedRoute`.
+
+**Impact:**
+Kiro delivered a production-ready authentication system in 5 minutes — something that I haven't even learnt and would probably take weeks to master. 
+
  

@@ -1,3 +1,9 @@
 export { Layout } from './Layout';
+export { Header } from './Header';
 export { Button } from './Button';
 export { LoadingSpinner } from './LoadingSpinner';
+export { ProtectedRoute } from './ProtectedRoute';
+export { PublicRoute } from './PublicRoute';
+export { FormInput } from './FormInput';
+export { LoginForm } from './LoginForm';
+export { RegisterForm } from './RegisterForm';

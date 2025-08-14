@@ -8,7 +8,9 @@ export const authService = {
   },
 
   async register(userData: RegisterRequest): Promise<AuthResponse> {
-    const response = await api.post<AuthResponse>('/auth/register', userData);
+    // Only send email and password to backend (confirmPassword is frontend-only validation)
+    const { email, password } = userData;
+    const response = await api.post<AuthResponse>('/auth/register', { email, password });
     return response.data;
   },
 
