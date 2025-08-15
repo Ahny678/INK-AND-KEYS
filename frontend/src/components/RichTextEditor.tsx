@@ -29,7 +29,8 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
     },
     editorProps: {
       attributes: {
-        class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none min-h-[400px] p-4 max-w-none prose-headings:font-bold prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl prose-strong:font-bold prose-em:italic prose-ul:list-disc prose-ol:list-decimal prose-li:ml-4',
+        class: 'focus:outline-none min-h-[400px] p-4',
+        style: 'font-family: system-ui, -apple-system, sans-serif; line-height: 1.6;',
       },
     },
   });
@@ -231,7 +232,9 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
       {/* Editor content */}
       <div className="bg-white">
-        <EditorContent editor={editor} />
+        <div className="tiptap-editor">
+          <EditorContent editor={editor} />
+        </div>
       </div>
 
       {/* Debug info - remove this in production */}
