@@ -20,3 +20,12 @@ Object.defineProperty(window, 'location', {
   },
   writable: true,
 })
+
+// Mock URL.createObjectURL and URL.revokeObjectURL
+Object.defineProperty(global, 'URL', {
+  value: {
+    createObjectURL: vi.fn(() => 'mocked-object-url'),
+    revokeObjectURL: vi.fn(),
+  },
+  writable: true,
+})

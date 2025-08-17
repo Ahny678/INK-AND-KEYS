@@ -58,9 +58,7 @@ export const DashboardPage: React.FC = () => {
   };
 
   const handleUploadFile = () => {
-    // This will be implemented in task 11
-    // For now, show a placeholder message
-    alert('File upload functionality will be implemented in task 11');
+    navigate('/upload');
   };
 
   const handleEditDocument = (document: Document) => {

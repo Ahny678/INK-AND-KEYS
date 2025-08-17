@@ -102,4 +102,28 @@ Kiro built a complete authentication flow for the React frontend:
 **Impact:**
 Kiro delivered a production-ready authentication system in 5 minutes — something that I haven't even learnt and would probably take weeks to master. 
 
+Here’s how you could document that for your **Code with Kiro** hackathon entry in the same style as your boilerplate:
+
+---
+
+## 2025-08-15 — Fixing Heading & List Formatting in TipTap
+
+**Prompt:**
+"I have inspected the HTML elements. When I choose List 1, List, or H1, H2, H3, they actually change in the DOM. However, it is not reflecting in my text editor. Bold and italic work, so there must be a difference in the code for bold/italic that is not there for headings and list items. Figure out the problem immediately."
+
+**Why:**
+I needed my rich text editor to visually reflect heading and list changes in real-time. Without it, the editor felt broken even though the DOM was updating.
+
+**Kiro Output Summary:**
+
+* Diagnosed the issue as a **CSS conflict** between Tailwind’s `prose` classes and TipTap’s editor output.
+* Noted that bold/italic worked because `<strong>` and `<em>` have default browser styles, while headings/lists rely on CSS.
+* Removed conflicting `prose` styles from the editor.
+* Added explicit styles for `<h1>`, `<h2>`, `<h3>`, `<ul>`, `<ol>`, `<li>` inside a `.tiptap-editor` wrapper in `index.css`, using `!important` to override Tailwind.
+* Verified fix by building the frontend successfully (`vite build`).
+
+**Impact:**
+Headings and lists now display correctly inside the editor, matching their intended formatting. The fix made the text editor visually reliable, improved the editing experience, and prevented future CSS conflicts from Tailwind.
+
+ 
  
