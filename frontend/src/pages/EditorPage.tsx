@@ -1,14 +1,15 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Layout, RichTextEditor, Button, LoadingSpinner } from '@/components';
-import { documentService } from '@/services/documentService';
+import { chapterService, bookService } from '@/services';
 import { useAutosave } from '@/hooks/useAutosave';
-import { Document } from '@/types/document';
+import { Chapter, Book } from '@/types';
 
 export const EditorPage: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+  const { bookId, chapterId } = useParams<{ bookId: string; chapterId: string }>();
   const navigate = useNavigate();
-  const [document, setDocument] = useState<Document | null>(null);
+  const [book, setBook] = useState<Book | null>(null);
+  const [chapter, setChapter] = useState<Chapter | null>(null);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(true);
@@ -18,52 +19,71 @@ export const EditorPage: React.FC = () => {
   // Autosave hook for content
   const { saveStatus, triggerSave, updateContent } = useAutosave({
     onSave: useCallback(async (newContent: string) => {
-      if (!document) return;
+      if (!chapter || !bookId) return;
       
-      await documentService.updateDocument(document.id, {
+      await chapterService.updateChapter(bookId, chapter.id, {
         content: newContent,
         title: title,
       });
-    }, [document, title]),
+    }, [chapter, bookId, title]),
     delay: 2000, // 2 seconds
-    enabled: !!document,
+    enabled: !!chapter && !!bookId,
   });
 
-  // Load document on mount
+  // Load book and chapter on mount
   useEffect(() => {
-    const loadDocument = async () => {
-      if (!id) {
-        // New document - create it first
-        try {
-          const newDoc = await documentService.createDocument({
-            title: 'Untitled Document',
-          });
-          setDocument(newDoc);
-          setTitle(newDoc.title);
-          setContent(newDoc.content || '');
-          // Replace URL with the new document ID
-          navigate(`/editor/${newDoc.id}`, { replace: true });
-        } catch (err) {
-          setError('Failed to create new document');
-          console.error('Error creating document:', err);
-        }
-      } else {
-        // Load existing document
-        try {
-          const doc = await documentService.getDocument(id);
-          setDocument(doc);
-          setTitle(doc.title);
-          setContent(doc.content || '');
-        } catch (err) {
-          setError('Failed to load document');
-          console.error('Error loading document:', err);
-        }
+    const loadBookAndChapter = async () => {
+      if (!bookId) {
+        setError('Book ID is required');
+        setLoading(false);
+        return;
       }
-      setLoading(false);
+
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Load book first
+        const bookData = await bookService.getBook(bookId);
+        setBook(bookData);
+
+        if (!chapterId) {
+          // New chapter - create it first
+          try {
+            const newChapter = await chapterService.createChapter(bookId, {
+              title: 'Untitled Chapter',
+            });
+            setChapter(newChapter);
+            setTitle(newChapter.title);
+            setContent(newChapter.content || '');
+            // Replace URL with the new chapter ID
+            navigate(`/books/${bookId}/chapters/${newChapter.id}/edit`, { replace: true });
+          } catch (err) {
+            setError('Failed to create new chapter');
+            console.error('Error creating chapter:', err);
+          }
+        } else {
+          // Load existing chapter
+          try {
+            const chapterData = await chapterService.getChapter(bookId, chapterId);
+            setChapter(chapterData);
+            setTitle(chapterData.title);
+            setContent(chapterData.content || '');
+          } catch (err) {
+            setError('Failed to load chapter');
+            console.error('Error loading chapter:', err);
+          }
+        }
+      } catch (err) {
+        setError('Failed to load book');
+        console.error('Error loading book:', err);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    loadDocument();
-  }, [id, navigate]);
+    loadBookAndChapter();
+  }, [bookId, chapterId, navigate]);
 
   const handleContentChange = useCallback((newContent: string) => {
     setContent(newContent);
@@ -71,28 +91,28 @@ export const EditorPage: React.FC = () => {
   }, [updateContent]);
 
   const handleTitleSave = useCallback(async () => {
-    if (!document || !title.trim()) return;
+    if (!chapter || !bookId || !title.trim()) return;
 
     try {
-      await documentService.updateDocument(document.id, {
+      await chapterService.updateChapter(bookId, chapter.id, {
         title: title.trim(),
       });
-      setDocument(prev => prev ? { ...prev, title: title.trim() } : null);
+      setChapter(prev => prev ? { ...prev, title: title.trim() } : null);
       setIsTitleEditing(false);
     } catch (err) {
       console.error('Error saving title:', err);
       setError('Failed to save title');
     }
-  }, [document, title]);
+  }, [chapter, bookId, title]);
 
   const handleTitleKeyPress = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       handleTitleSave();
     } else if (e.key === 'Escape') {
-      setTitle(document?.title || '');
+      setTitle(chapter?.title || '');
       setIsTitleEditing(false);
     }
-  }, [handleTitleSave, document]);
+  }, [handleTitleSave, chapter]);
 
   if (loading) {
     return (
@@ -112,8 +132,8 @@ export const EditorPage: React.FC = () => {
         <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <div className="text-red-600 mb-4">{error}</div>
-            <Button onClick={() => navigate('/dashboard')}>
-              Back to Dashboard
+            <Button onClick={() => navigate(`/books/${bookId}`)}>
+              Back to Book
             </Button>
           </div>
         </div>
@@ -121,12 +141,12 @@ export const EditorPage: React.FC = () => {
     );
   }
 
-  if (!document) {
+  if (!book || !chapter) {
     return (
       <Layout>
         <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
           <div className="text-center text-gray-600">
-            Document not found
+            Book or chapter not found
           </div>
         </div>
       </Layout>
@@ -136,10 +156,29 @@ export const EditorPage: React.FC = () => {
   return (
     <Layout>
       <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-        {/* Document Header */}
+        {/* Chapter Header */}
         <div className="mb-6">
           <div className="flex items-center justify-between mb-4">
             <div className="flex-1">
+              <div className="flex items-center gap-3 mb-2">
+                <Button
+                  variant="outline"
+                  onClick={() => navigate(`/books/${bookId}`)}
+                  className="flex items-center gap-2"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                  Back to Book
+                </Button>
+              </div>
+              
+              <div className="mb-2">
+                <h2 className="text-lg font-medium text-gray-600">
+                  {book.title}
+                </h2>
+              </div>
+              
               {isTitleEditing ? (
                 <input
                   type="text"
@@ -160,23 +199,13 @@ export const EditorPage: React.FC = () => {
                 </h1>
               )}
             </div>
-            <Button
-              variant="secondary"
-              onClick={() => navigate('/dashboard')}
-              className="ml-4"
-            >
-              Back to Dashboard
-            </Button>
           </div>
           
-          {/* Document metadata */}
+          {/* Chapter metadata */}
           <div className="text-sm text-gray-500 flex items-center space-x-4">
-            <span>Type: {document.documentType === 'CREATED' ? 'Created' : 'OCR Processed'}</span>
-            <span>Created: {new Date(document.createdAt).toLocaleDateString()}</span>
-            <span>Updated: {new Date(document.updatedAt).toLocaleDateString()}</span>
-            {document.originalFileName && (
-              <span>From: {document.originalFileName}</span>
-            )}
+            <span>Chapter {chapter.order}</span>
+            <span>Created: {new Date(chapter.createdAt).toLocaleDateString()}</span>
+            <span>Updated: {new Date(chapter.updatedAt).toLocaleDateString()}</span>
           </div>
         </div>
 

@@ -3,97 +3,103 @@ import { useNavigate } from 'react-router-dom';
 import { 
   Layout, 
   Button, 
-  DocumentList, 
+  BookList, 
   EmptyState, 
-  DeleteConfirmationModal 
+  DeleteConfirmationModal,
+  CreateBookModal
 } from '@/components';
-import { documentService } from '@/services';
-import { Document } from '@/types/document';
+import { bookService } from '@/services';
+import { Book } from '@/types/book';
 
 export const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
-  const [documents, setDocuments] = useState<Document[]>([]);
+  const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [createBookModal, setCreateBookModal] = useState(false);
+  const [isCreatingBook, setIsCreatingBook] = useState(false);
   const [deleteModal, setDeleteModal] = useState<{
     isOpen: boolean;
-    document: Document | null;
+    book: Book | null;
     isDeleting: boolean;
   }>({
     isOpen: false,
-    document: null,
+    book: null,
     isDeleting: false,
   });
 
-  // Load documents on component mount
+  // Load books on component mount
   useEffect(() => {
-    loadDocuments();
+    loadBooks();
   }, []);
 
-  const loadDocuments = async () => {
+  const loadBooks = async () => {
     try {
       setLoading(true);
       setError(null);
-      const fetchedDocuments = await documentService.getDocuments();
-      setDocuments(fetchedDocuments);
+      const fetchedBooks = await bookService.getBooks();
+      setBooks(fetchedBooks);
     } catch (err) {
-      console.error('Failed to load documents:', err);
-      setError('Failed to load documents. Please try again.');
+      console.error('Failed to load books:', err);
+      setError('Failed to load books. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleCreateDocument = async () => {
+  const handleCreateBook = async (data: { title: string; description?: string }) => {
     try {
-      const newDocument = await documentService.createDocument({
-        title: 'Untitled Document',
-      });
-      // Navigate to editor page with the new document
-      navigate(`/editor/${newDocument.id}`);
+      setIsCreatingBook(true);
+      const newBook = await bookService.createBook(data);
+      setBooks(prev => [newBook, ...prev]);
+      setCreateBookModal(false);
     } catch (err) {
-      console.error('Failed to create document:', err);
-      setError('Failed to create document. Please try again.');
+      console.error('Failed to create book:', err);
+      setError('Failed to create book. Please try again.');
+    } finally {
+      setIsCreatingBook(false);
     }
   };
 
-  const handleUploadFile = () => {
-    navigate('/upload');
+  const handleViewBook = (book: Book) => {
+    navigate(`/books/${book.id}`);
   };
 
-  const handleEditDocument = (document: Document) => {
-    navigate(`/editor/${document.id}`);
+  const handleEditBook = (book: Book) => {
+    // For now, we'll just show the book details
+    // In the future, this could open an edit modal
+    console.log('Edit book:', book);
   };
 
-  const handleDeleteDocument = (document: Document) => {
+  const handleDeleteBook = (book: Book) => {
     setDeleteModal({
       isOpen: true,
-      document,
+      book,
       isDeleting: false,
     });
   };
 
   const confirmDelete = async () => {
-    if (!deleteModal.document) return;
+    if (!deleteModal.book) return;
 
     try {
       setDeleteModal(prev => ({ ...prev, isDeleting: true }));
-      await documentService.deleteDocument(deleteModal.document.id);
+      await bookService.deleteBook(deleteModal.book.id);
       
-      // Remove document from local state
-      setDocuments(prev => 
-        prev.filter(doc => doc.id !== deleteModal.document!.id)
+      // Remove book from local state
+      setBooks(prev => 
+        prev.filter(book => book.id !== deleteModal.book!.id)
       );
       
       // Close modal
       setDeleteModal({
         isOpen: false,
-        document: null,
+        book: null,
         isDeleting: false,
       });
     } catch (err) {
-      console.error('Failed to delete document:', err);
-      setError('Failed to delete document. Please try again.');
+      console.error('Failed to delete book:', err);
+      setError('Failed to delete book. Please try again.');
       setDeleteModal(prev => ({ ...prev, isDeleting: false }));
     }
   };
@@ -101,7 +107,7 @@ export const DashboardPage: React.FC = () => {
   const cancelDelete = () => {
     setDeleteModal({
       isOpen: false,
-      document: null,
+      book: null,
       isDeleting: false,
     });
   };
@@ -113,36 +119,15 @@ export const DashboardPage: React.FC = () => {
         <div className="mb-8">
           <div className="flex justify-between items-center">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-              <p className="text-gray-600 mt-2">Manage your documents and notes</p>
+              <h1 className="text-3xl font-bold text-gray-900">My Books</h1>
+              <p className="text-gray-600 mt-2">Manage your book collection and start writing</p>
             </div>
             
-            {/* Action buttons - only show when not loading and has documents */}
-            {!loading && documents.length > 0 && (
+            {/* Action buttons - only show when not loading and has books */}
+            {!loading && books.length > 0 && (
               <div className="flex gap-3">
                 <Button
-                  variant="outline"
-                  onClick={handleUploadFile}
-                  className="flex items-center gap-2"
-                >
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                    />
-                  </svg>
-                  Upload Notes
-                </Button>
-                <Button
-                  onClick={handleCreateDocument}
+                  onClick={() => setCreateBookModal(true)}
                   className="flex items-center gap-2"
                 >
                   <svg
@@ -159,7 +144,7 @@ export const DashboardPage: React.FC = () => {
                       d="M12 4v16m8-8H4"
                     />
                   </svg>
-                  New Document
+                  New Book
                 </Button>
               </div>
             )}
@@ -188,7 +173,7 @@ export const DashboardPage: React.FC = () => {
               <div className="ml-3">
                 <p className="text-sm text-red-800">{error}</p>
                 <button
-                  onClick={loadDocuments}
+                  onClick={loadBooks}
                   className="mt-2 text-sm text-red-600 hover:text-red-500 underline"
                 >
                   Try again
@@ -200,27 +185,36 @@ export const DashboardPage: React.FC = () => {
 
         {/* Main Content */}
         <div className="bg-white rounded-lg shadow">
-          {!loading && documents.length === 0 && !error ? (
+          {!loading && books.length === 0 && !error ? (
             <EmptyState
-              onCreateDocument={handleCreateDocument}
-              onUploadFile={handleUploadFile}
+              onCreateDocument={() => setCreateBookModal(true)}
+              onUploadFile={() => {}} // We'll handle this differently for books
             />
           ) : (
             <div className="p-6">
-              <DocumentList
-                documents={documents}
+              <BookList
+                books={books}
                 loading={loading}
-                onEditDocument={handleEditDocument}
-                onDeleteDocument={handleDeleteDocument}
+                onViewBook={handleViewBook}
+                onEditBook={handleEditBook}
+                onDeleteBook={handleDeleteBook}
               />
             </div>
           )}
         </div>
 
+        {/* Create Book Modal */}
+        <CreateBookModal
+          isOpen={createBookModal}
+          onClose={() => setCreateBookModal(false)}
+          onSubmit={handleCreateBook}
+          isCreating={isCreatingBook}
+        />
+
         {/* Delete Confirmation Modal */}
         <DeleteConfirmationModal
           isOpen={deleteModal.isOpen}
-          documentTitle={deleteModal.document?.title || ''}
+          documentTitle={deleteModal.book?.title || ''}
           onConfirm={confirmDelete}
           onCancel={cancelDelete}
           isDeleting={deleteModal.isDeleting}

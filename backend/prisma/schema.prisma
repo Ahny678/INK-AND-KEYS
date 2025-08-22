@@ -17,12 +17,48 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  // New: Books relationship (replaces documents)
+  books     Book[]
+  // Keep existing for migration
   documents Document[]
   files     UploadedFile[]
 
   @@map("users")
 }
 
+// NEW: Book model for organizing content
+model Book {
+  id          String   @id @default(cuid())
+  title       String
+  description String?  // Optional book description
+  userId      String   // Who owns this book
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relationships
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  chapters Chapter[] // A book has many chapters
+
+  @@map("books")
+}
+
+// NEW: Chapter model for individual chapters within books
+model Chapter {
+  id        String   @id @default(cuid())
+  title     String
+  content   String   @default("")
+  order     Int      // Chapter order within the book
+  bookId    String   // Which book this chapter belongs to
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationships
+  book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
+  @@map("chapters")
+}
+
+// EXISTING: Document model (keeping for migration purposes)
 model Document {
   id               String      @id @default(cuid())
   title            String

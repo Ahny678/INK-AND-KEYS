@@ -5,6 +5,7 @@ import { HomePage } from '@/pages/HomePage';
 import { LoginPage } from '@/pages/LoginPage';
 import { RegisterPage } from '@/pages/RegisterPage';
 import { DashboardPage } from '@/pages/DashboardPage';
+import { BookPage } from '@/pages/BookPage';
 import { EditorPage } from '@/pages/EditorPage';
 import { UploadPage } from '@/pages/UploadPage';
 import { EditorDebug } from '@/components/EditorDebug';
@@ -41,7 +42,15 @@ function App() {
               } 
             />
             <Route 
-              path="/editor/:id?" 
+              path="/books/:bookId" 
+              element={
+                <ProtectedRoute>
+                  <BookPage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/books/:bookId/chapters/:chapterId/edit" 
               element={
                 <ProtectedRoute>
                   <EditorPage />

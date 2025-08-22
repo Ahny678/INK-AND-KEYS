@@ -15,3 +15,11 @@ export { RichTextEditor } from './RichTextEditor';
 export { FileUploader } from './FileUploader';
 export { FilePreview } from './FilePreview';
 export { OCRProgressIndicator } from './OCRProgressIndicator';
+
+// Book and Chapter Components
+export { BookCard } from './BookCard';
+export { BookList } from './BookList';
+export { ChapterCard } from './ChapterCard';
+export { ChapterList } from './ChapterList';
+export { CreateBookModal } from './CreateBookModal';
+export { CreateChapterModal } from './CreateChapterModal';
