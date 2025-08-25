@@ -28,12 +28,14 @@ model User {
 
 // NEW: Book model for organizing content
 model Book {
-  id          String   @id @default(cuid())
-  title       String
-  description String?  // Optional book description
-  userId      String   // Who owns this book
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id                  String   @id @default(cuid())
+  title               String
+  description         String?  // Optional book description
+  coverImageUrl       String?  // Cloudinary URL for AI-generated cover
+  coverImagePublicId  String?  // Cloudinary public ID for deletion
+  userId              String   // Who owns this book
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 
   // Relationships
   user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -44,13 +46,15 @@ model Book {
 
 // NEW: Chapter model for individual chapters within books
 model Chapter {
-  id        String   @id @default(cuid())
-  title     String
-  content   String   @default("")
-  order     Int      // Chapter order within the book
-  bookId    String   // Which book this chapter belongs to
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                  String   @id @default(cuid())
+  title               String
+  content             String   @default("")
+  order               Int      // Chapter order within the book
+  coverImageUrl       String?  // Cloudinary URL for AI-generated cover
+  coverImagePublicId  String?  // Cloudinary public ID for deletion
+  bookId              String   // Which book this chapter belongs to
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 
   // Relationships
   book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)

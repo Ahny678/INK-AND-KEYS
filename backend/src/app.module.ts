@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { DocumentsModule } from './documents/documents.module';
 import { FilesModule } from './files/files.module';
 import { OcrModule } from './ocr/ocr.module';
+import { AIImageModule } from './ai-image/ai-image.module';
 import { validate } from './config/env.validation';
 
 @Module({
@@ -20,6 +21,7 @@ import { validate } from './config/env.validation';
     DocumentsModule,
     FilesModule,
     OcrModule,
+    AIImageModule,
   ],
   controllers: [AppController],
   providers: [AppService],

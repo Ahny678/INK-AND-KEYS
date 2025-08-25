@@ -85,13 +85,13 @@
   - Add retry mechanisms for failed operations
   - _Requirements: 2.2, 2.3, 2.4, 2.5, 3.1, 3.2, 3.4_
 
-- [ ] 12. Update database schema for books and chapters with cover images
+- [x] 12. Update database schema for books and chapters with cover images
   - Add cover image fields (coverImageUrl and coverImagePublicId) to Book and Chapter models
   - Create migration to add cover image columns to existing tables
   - Update existing DTOs to include cover image fields
   - _Requirements: 7.1, 7.2, 7.3, 7.4_
 
-- [ ] 13. Implement AI image generation service
+- [-] 13. Implement AI image generation service
   - Create AI image service with Hugging Face Qwen-Image integration using endpoint "https://router.huggingface.co/fal-ai/fal-ai/qwen-image"
   - Implement Cloudinary upload and delete functionality
   - Add image generation with prompt processing and validation (sync_mode: true)
