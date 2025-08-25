@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Button } from './Button';
+import { LoadingSpinner } from './LoadingSpinner';
 
 interface CreateChapterModalProps {
   isOpen: boolean;
@@ -98,16 +99,31 @@ export const CreateChapterModal: React.FC<CreateChapterModalProps> = ({
                 variant="outline"
                 onClick={handleClose}
                 disabled={isCreating}
-                className="flex-1"
+                className="flex-1 flex items-center gap-2"
               >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={!title.trim() || isCreating}
-                className="flex-1"
+                className="flex-1 flex items-center gap-2"
               >
-                {isCreating ? 'Creating...' : 'Add Chapter'}
+                {isCreating ? (
+                  <>
+                    <LoadingSpinner size="sm" />
+                    Creating...
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    Add Chapter
+                  </>
+                )}
               </Button>
             </div>
           </form>

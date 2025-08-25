@@ -15,6 +15,7 @@ export const EditorPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isTitleEditing, setIsTitleEditing] = useState(false);
+  const [currentChapterOrder, setCurrentChapterOrder] = useState<number>(0);
 
   // Autosave hook for content
   const { saveStatus, triggerSave, updateContent } = useAutosave({
@@ -84,6 +85,43 @@ export const EditorPage: React.FC = () => {
 
     loadBookAndChapter();
   }, [bookId, chapterId, navigate]);
+
+  // Function to get current chapter order from book's chapters
+  const getCurrentChapterOrder = useCallback(async () => {
+    if (!bookId || !chapterId) return;
+
+    try {
+      const chapters = await chapterService.getChaptersByBook(bookId);
+      const currentChapter = chapters.find(c => c.id === chapterId);
+      if (currentChapter) {
+        // Sort chapters by order and find the current chapter's position
+        const sortedChapters = chapters.sort((a, b) => a.order - b.order);
+        const orderIndex = sortedChapters.findIndex(c => c.id === chapterId);
+        setCurrentChapterOrder(orderIndex + 1);
+      }
+    } catch (err) {
+      console.error('Failed to get current chapter order:', err);
+    }
+  }, [bookId, chapterId]);
+
+  // Update chapter order when component mounts or when chapter changes
+  useEffect(() => {
+    if (chapter) {
+      getCurrentChapterOrder();
+    }
+  }, [chapter, getCurrentChapterOrder]);
+
+  // Refresh chapter order when page becomes visible (e.g., after navigation back from BookPage)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden && chapter) {
+        getCurrentChapterOrder();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [chapter, getCurrentChapterOrder]);
 
   const handleContentChange = useCallback((newContent: string) => {
     setContent(newContent);
@@ -167,9 +205,20 @@ export const EditorPage: React.FC = () => {
                   className="flex items-center gap-2"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                   </svg>
                   Back to Book
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={getCurrentChapterOrder}
+                  className="flex items-center gap-2"
+                  title="Refresh chapter order"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                  Refresh Order
                 </Button>
               </div>
               
@@ -203,7 +252,7 @@ export const EditorPage: React.FC = () => {
           
           {/* Chapter metadata */}
           <div className="text-sm text-gray-500 flex items-center space-x-4">
-            <span>Chapter {chapter.order}</span>
+            <span>Chapter {currentChapterOrder || chapter.order}</span>
             <span>Created: {new Date(chapter.createdAt).toLocaleDateString()}</span>
             <span>Updated: {new Date(chapter.updatedAt).toLocaleDateString()}</span>
           </div>

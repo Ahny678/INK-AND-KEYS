@@ -30,6 +30,8 @@ export const BookPage: React.FC = () => {
     isDeleting: false,
   });
 
+  const [isReordering, setIsReordering] = useState(false);
+
   // Load book and chapters on component mount
   useEffect(() => {
     if (bookId) {
@@ -66,7 +68,14 @@ export const BookPage: React.FC = () => {
     try {
       setIsCreatingChapter(true);
       const newChapter = await chapterService.createChapter(bookId, data);
-      setChapters(prev => [...prev, newChapter]);
+      
+      // Add new chapter and ensure proper ordering
+      setChapters(prev => {
+        const updatedChapters = [...prev, newChapter];
+        // Sort by order to maintain proper sequence
+        return updatedChapters.sort((a, b) => a.order - b.order);
+      });
+      
       setCreateChapterModal(false);
     } catch (err) {
       console.error('Failed to create chapter:', err);
@@ -88,6 +97,23 @@ export const BookPage: React.FC = () => {
     });
   };
 
+  const handleReorderChapters = async (chapterIds: string[]) => {
+    if (!bookId) return;
+
+    try {
+      setIsReordering(true);
+      const reorderedChapters = await chapterService.reorderChapters(bookId, { chapterIds });
+      
+      // Update local state with reordered chapters
+      setChapters(reorderedChapters);
+    } catch (err) {
+      console.error('Failed to reorder chapters:', err);
+      setError('Failed to reorder chapters. Please try again.');
+    } finally {
+      setIsReordering(false);
+    }
+  };
+
   const confirmDelete = async () => {
     if (!deleteModal.chapter || !bookId) return;
 
@@ -95,10 +121,15 @@ export const BookPage: React.FC = () => {
       setDeleteModal(prev => ({ ...prev, isDeleting: true }));
       await chapterService.deleteChapter(bookId, deleteModal.chapter.id);
       
-      // Remove chapter from local state
-      setChapters(prev => 
-        prev.filter(chapter => chapter.id !== deleteModal.chapter!.id)
-      );
+      // Remove chapter from local state and reorder remaining chapters
+      setChapters(prev => {
+        const remainingChapters = prev.filter(chapter => chapter.id !== deleteModal.chapter!.id);
+        // Reorder remaining chapters to ensure sequential numbering
+        return remainingChapters.map((chapter, index) => ({
+          ...chapter,
+          order: index + 1
+        }));
+      });
       
       // Close modal
       setDeleteModal({
@@ -163,7 +194,7 @@ export const BookPage: React.FC = () => {
                   className="flex items-center gap-2"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                   </svg>
                   Back to Books
                 </Button>
@@ -196,7 +227,7 @@ export const BookPage: React.FC = () => {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth={2}
-                    d="M12 4v16m8-8H4"
+                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
                   />
                 </svg>
                 Add Chapter
@@ -245,6 +276,8 @@ export const BookPage: React.FC = () => {
               loading={loading}
               onEditChapter={handleEditChapter}
               onDeleteChapter={handleDeleteChapter}
+              onReorderChapters={handleReorderChapters}
+              isReordering={isReordering}
             />
           </div>
         </div>

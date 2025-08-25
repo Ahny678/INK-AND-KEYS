@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from './Button';
+import { LoadingSpinner } from './LoadingSpinner';
 import { Book } from '@/types/book';
 
 interface EditBookModalProps {
@@ -109,16 +110,31 @@ export const EditBookModal: React.FC<EditBookModalProps> = ({
                 variant="outline"
                 onClick={handleClose}
                 disabled={isUpdating}
-                className="flex-1"
+                className="flex-1 flex items-center gap-2"
               >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={!title.trim() || isUpdating}
-                className="flex-1"
+                className="flex-1 flex items-center gap-2"
               >
-                {isUpdating ? 'Updating...' : 'Update Book'}
+                {isUpdating ? (
+                  <>
+                    <LoadingSpinner size="sm" />
+                    Updating...
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    Update Book
+                  </>
+                )}
               </Button>
             </div>
           </form>
