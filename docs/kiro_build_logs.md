@@ -126,4 +126,49 @@ I needed my rich text editor to visually reflect heading and list changes in rea
 Headings and lists now display correctly inside the editor, matching their intended formatting. The fix made the text editor visually reliable, improved the editing experience, and prevented future CSS conflicts from Tailwind.
 
  
+Perfect 👍 — thanks for giving me both the boilerplate format and your full prompt history with Kiro.
+
+Here’s how we can turn your Kiro experience into hackathon documentation in the same style as your boilerplate. I’ve extracted the key milestones from the history and formatted them properly:
+
+---
+
+## 2025-08-23 — AI Cover Image Spec Creation
+
+**Prompt:**
+"Set up the specs for AI-generated cover images (highlight paragraph → generate cover via Hugging Face Qwen-Image, store in Cloudinary, integrate with books/chapters)."
+
+**Why:**
+I wanted a clear roadmap before jumping into code. Since books and chapters already existed, I needed Kiro to figure out what’s missing and produce updated requirements, design, and tasks.
+
+**Kiro Output Summary:**
+
+* Updated `requirements.md` with new functionality (AI-generated covers, fallback icons, Cloudinary integration).
+* Extended `design.md` with new architecture for AI image generation (using Hugging Face Qwen-Image instead of Stability AI).
+* Added \~13 new tasks to `tasks.md`, covering database schema changes, AI service integration, and frontend updates.
+
+**Impact:**
+This gave me a well-defined spec that fits my existing project state. It meant I didn’t have to manually map out changes across backend, frontend, and infra — saving me hours of planning and making sure I didn’t miss anything.
+
+---
+
+## 2025-08-24 — Codebase Analysis & Spec Refinement
+
+**Prompt:**
+"Study the current state of the codebase deeply so you'll know what has already been achieved."
+
+**Why:**
+I had already added books and chapters manually, and I didn’t want Kiro to duplicate effort. I needed it to analyze my codebase (controllers, services, DTOs, schema) and refine the spec to only cover what’s missing.
+
+**Kiro Output Summary:**
+
+* Read `schema.prisma`, controllers, services, DTOs, and frontend code.
+* Confirmed books/chapters are fully implemented.
+* Marked what’s missing (coverImage fields, AI service, Cloudinary integration, frontend UI for cover images).
+* Updated tasks to skip redundant work and focus only on cover image features.
+
+**Impact:**
+This validation step was huge — instead of blindly following a boilerplate plan, Kiro adapted to my actual project. It gave me confidence that the remaining tasks are precise and achievable within hackathon time.
+
+---
+ 
  

@@ -12,7 +12,7 @@
   - Set up Prisma ORM with PostgreSQL connection
   - Create database schema for User, Document, and UploadedFile models
   - Configure environment variables and validation
-  - _Requirements: 6.4, 6.5_
+  - _Requirements: 8.4, 8.5_
 
 - [x] 3. Implement user authentication system
   - Create User entity and authentication DTOs
@@ -85,38 +85,99 @@
   - Add retry mechanisms for failed operations
   - _Requirements: 2.2, 2.3, 2.4, 2.5, 3.1, 3.2, 3.4_
 
-- [ ] 12. Integrate frontend and backend with API communication
+- [ ] 12. Update database schema for books and chapters with cover images
+  - Add cover image fields (coverImageUrl and coverImagePublicId) to Book and Chapter models
+  - Create migration to add cover image columns to existing tables
+  - Update existing DTOs to include cover image fields
+  - _Requirements: 7.1, 7.2, 7.3, 7.4_
+
+- [ ] 13. Implement AI image generation service
+  - Create AI image service with Hugging Face Qwen-Image integration using endpoint "https://router.huggingface.co/fal-ai/fal-ai/qwen-image"
+  - Implement Cloudinary upload and delete functionality
+  - Add image generation with prompt processing and validation (sync_mode: true)
+  - Create error handling for API failures and retries
+  - Write unit tests for AI image service
+  - _Requirements: 6.2, 6.3, 6.7, 6.10_
+
+- [ ] 14. Add cover generation endpoints to existing book and chapter controllers
+  - Add POST /books/:id/cover endpoint for book cover generation
+  - Add POST /chapters/:id/cover endpoint for chapter cover generation
+  - Update book and chapter services to handle cover generation
+  - Add cover image cleanup when books/chapters are deleted
+  - _Requirements: 6.2, 6.3, 6.5, 6.6, 7.5, 7.6_
+
+- [ ] 15. Update frontend types and services for cover images
+  - Add coverImageUrl field to Book and Chapter interfaces
+  - Update book and chapter services to handle cover generation API calls
+  - Add cover generation methods to bookService and chapterService
+  - _Requirements: 6.1, 6.2, 6.3_
+
+- [ ] 17. Implement text selection and cover generation UI
+  - Create TextSelectionMenu component for highlighted text
+  - Add "Use as cover image" option to text selection context menu
+  - Implement CoverImageGenerator modal for book cover creation
+  - Create ImageGenerationProgress component with loading states
+  - Add cover image display components with fallback handling
+  - _Requirements: 6.1, 6.4, 6.9, 6.11_
+
+- [ ] 18. Integrate AI cover generation with editor interface
+  - Connect text selection menu to chapter cover generation API
+  - Implement book cover generation from text input
+  - Add cover image display to chapter and book headers
+  - Create image replacement functionality for existing covers
+  - Handle generation errors and provide user feedback
+  - _Requirements: 6.1, 6.2, 6.3, 6.5, 6.6, 6.10_
+
+- [ ] 19. Add environment configuration for external services
+  - Configure Hugging Face API token and endpoint settings
+  - Set up Cloudinary credentials and folder organization
+  - Add environment validation for required AI service variables
+  - Create development and production environment templates
+  - _Requirements: 8.6, 8.7_
+
+- [ ] 20. Integrate frontend and backend with API communication
   - Create API service layer with axios configuration
   - Implement error interceptors and response handling
   - Add CORS configuration for development and production
-  - Test all API endpoints with frontend integration
-  - _Requirements: 6.4_
+  - Test all API endpoints including new book/chapter/cover endpoints
+  - _Requirements: 8.4_
 
-- [ ] 13. Add comprehensive error handling and user feedback
+- [ ] 21. Implement cover image cleanup and management
+  - Add automatic cleanup of old cover images when generating new ones
+  - Implement cascade deletion of cover images when books/chapters are deleted
+  - Create image optimization and format conversion for better performance
+  - Add image validation and size limits for generated covers
+  - _Requirements: 7.5, 7.6, 8.8_
+
+- [ ] 22. Add comprehensive error handling and user feedback
   - Implement global error boundary for React components
   - Add toast notifications for user actions and errors
-  - Create loading spinners and skeleton screens
-  - Handle network errors and offline scenarios
-  - _Requirements: All error handling aspects_
+  - Create loading spinners and skeleton screens for image generation
+  - Handle network errors and AI service failures gracefully
+  - Add specific error messages for cover generation failures
+  - _Requirements: All error handling aspects, 6.7, 8.8_
 
-- [ ] 14. Write integration and end-to-end tests
+- [ ] 23. Write integration and end-to-end tests
   - Create integration tests for critical user workflows
   - Add E2E tests for authentication flow
   - Test document creation and editing workflows
   - Verify OCR upload and processing functionality
+  - Test book and chapter creation with cover generation
+  - Mock external API calls for Hugging Face and Cloudinary in tests
   - _Requirements: All functional requirements_
 
-- [ ] 15. Optimize application performance and prepare for deployment
+- [ ] 24. Optimize application performance and prepare for deployment
   - Implement code splitting and lazy loading for React components
   - Add database indexing for frequently queried fields
   - Optimize bundle size and implement caching strategies
-  - Configure production environment variables
-  - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 6.6_
+  - Configure production environment variables including AI service credentials
+  - Implement image lazy loading and CDN optimization
+  - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5, 8.6_
 
-- [ ] 16. Create deployment configuration and documentation
-  - Set up production Docker configurations
+- [ ] 25. Create deployment configuration and documentation
+  - Set up production Docker configurations with environment variables
   - Create deployment scripts for Vercel and Render
-  - Write comprehensive README with setup instructions
-  - Document API endpoints and usage examples
-  - Create environment variable templates
-  - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 6.6_
+  - Write comprehensive README with setup instructions including AI service setup
+  - Document API endpoints and usage examples including cover generation
+  - Create environment variable templates with AI service credentials
+  - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5, 8.6_

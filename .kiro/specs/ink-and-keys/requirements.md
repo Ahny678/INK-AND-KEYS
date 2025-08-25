@@ -78,15 +78,50 @@ Ink & Keys is a productivity and workflow tool designed for writers, combining t
 6. WHEN documents are loading THEN the system SHALL show appropriate loading indicators
 7. WHEN a user wants to create a new document THEN the system SHALL provide a "New Document" button on the dashboard
 
-### Requirement 6: System Architecture and Deployment
+### Requirement 6: AI-Generated Cover Images
 
-**User Story:** As a developer, I want the application to be easily deployable and maintainable, so that it can be quickly set up for development or production use.
+**User Story:** As a writer, I want to generate cover images for my books and chapters using AI based on selected text content, so that I can create visually appealing covers that represent my written content.
+
+#### Acceptance Criteria
+
+1. WHEN a user highlights text in a chapter THEN the system SHALL provide a "Use as cover image" option in the context menu
+2. WHEN a user selects "Use as cover image" THEN the system SHALL send the highlighted text to Hugging Face Qwen-Image for image generation
+3. WHEN AI image generation completes successfully THEN the system SHALL upload the generated image to Cloudinary for storage
+4. WHEN the image is stored THEN the system SHALL update the chapter record with the cover image URL
+5. WHEN a user creates or edits a book THEN the system SHALL provide an option to paste text and generate a book cover image
+6. WHEN a user submits text for book cover generation THEN the system SHALL follow the same AI generation and storage process
+7. WHEN AI image generation fails THEN the system SHALL display an error message and allow the user to retry
+8. WHEN a book or chapter has no cover image THEN the system SHALL display a default book icon placeholder
+9. WHEN displaying books or chapters THEN the system SHALL show the cover image or default icon in lists and detail views
+10. WHEN a user generates a new cover image THEN the system SHALL replace any existing cover image for that book or chapter
+11. WHEN the system processes cover image generation THEN it SHALL provide visual feedback showing generation progress
+
+### Requirement 7: Enhanced Book and Chapter Management
+
+**User Story:** As a writer, I want to organize my documents into books with chapters and manage cover images for each, so that I can structure my writing projects hierarchically with visual representation.
+
+#### Acceptance Criteria
+
+1. WHEN a user creates a book THEN the system SHALL allow them to set a title, description, and optionally generate a cover image
+2. WHEN a user creates a chapter within a book THEN the system SHALL associate it with the parent book and allow cover image generation
+3. WHEN a user views a book THEN the system SHALL display the book cover image or default icon along with chapter list
+4. WHEN a user views a chapter THEN the system SHALL display the chapter cover image or default icon in the editor header
+5. WHEN a user deletes a book THEN the system SHALL also delete associated cover images from Cloudinary
+6. WHEN a user deletes a chapter THEN the system SHALL also delete the associated cover image from Cloudinary
+7. WHEN displaying book and chapter lists THEN the system SHALL show cover images as thumbnails for visual identification
+8. WHEN a user updates a book or chapter cover THEN the system SHALL delete the old image from Cloudinary before storing the new one
+
+### Requirement 8: System Architecture and Deployment
+
+**User Story:** As a developer, I want the application to be easily deployable and maintainable with proper cloud integrations, so that it can be quickly set up for development or production use.
 
 #### Acceptance Criteria
 
 1. WHEN the project is cloned THEN the system SHALL be runnable with a single docker-compose command
-2. WHEN containers start THEN the system SHALL automatically set up the database schema
+2. WHEN containers start THEN the system SHALL automatically set up the database schema with book and chapter models
 3. WHEN the application runs THEN the frontend SHALL communicate with the backend via REST API
 4. WHEN API calls are made THEN the system SHALL handle CORS properly for frontend-backend communication
 5. WHEN the database starts THEN the system SHALL use PostgreSQL with Prisma ORM for data management
-6. WHEN environment variables are configured THEN the system SHALL use them for database connections and JWT secrets
+6. WHEN environment variables are configured THEN the system SHALL use them for database connections, JWT secrets, Hugging Face API, and Cloudinary credentials
+7. WHEN the system starts THEN it SHALL validate that all required environment variables (HF_TOKEN, CLOUDINARY_API_KEY, CLOUDINARY_USER, CLOUDINARY_API_SECRET) are present
+8. WHEN external API calls are made THEN the system SHALL handle network failures gracefully with appropriate error messages
