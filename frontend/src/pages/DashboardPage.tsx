@@ -6,7 +6,8 @@ import {
   BookList, 
   EmptyState, 
   DeleteConfirmationModal,
-  CreateBookModal
+  CreateBookModal,
+  EditBookModal
 } from '@/components';
 import { bookService } from '@/services';
 import { Book } from '@/types/book';
@@ -26,6 +27,16 @@ export const DashboardPage: React.FC = () => {
     isOpen: false,
     book: null,
     isDeleting: false,
+  });
+
+  const [editBookModal, setEditBookModal] = useState<{
+    isOpen: boolean;
+    book: Book | null;
+    isUpdating: boolean;
+  }>({
+    isOpen: false,
+    book: null,
+    isUpdating: false,
   });
 
   // Load books on component mount
@@ -66,9 +77,38 @@ export const DashboardPage: React.FC = () => {
   };
 
   const handleEditBook = (book: Book) => {
-    // For now, we'll just show the book details
-    // In the future, this could open an edit modal
-    console.log('Edit book:', book);
+    setEditBookModal({
+      isOpen: true,
+      book,
+      isUpdating: false,
+    });
+  };
+
+  const handleUpdateBook = async (data: { title: string; description?: string }) => {
+    if (!editBookModal.book) return;
+
+    try {
+      setEditBookModal(prev => ({ ...prev, isUpdating: true }));
+      const updatedBook = await bookService.updateBook(editBookModal.book.id, data);
+      
+      // Update book in local state
+      setBooks(prev => 
+        prev.map(book => 
+          book.id === editBookModal.book!.id ? updatedBook : book
+        )
+      );
+      
+      // Close modal
+      setEditBookModal({
+        isOpen: false,
+        book: null,
+        isUpdating: false,
+      });
+    } catch (err) {
+      console.error('Failed to update book:', err);
+      setError('Failed to update book. Please try again.');
+      setEditBookModal(prev => ({ ...prev, isUpdating: false }));
+    }
   };
 
   const handleDeleteBook = (book: Book) => {
@@ -109,6 +149,14 @@ export const DashboardPage: React.FC = () => {
       isOpen: false,
       book: null,
       isDeleting: false,
+    });
+  };
+
+  const closeEditModal = () => {
+    setEditBookModal({
+      isOpen: false,
+      book: null,
+      isUpdating: false,
     });
   };
 
@@ -218,6 +266,15 @@ export const DashboardPage: React.FC = () => {
           onConfirm={confirmDelete}
           onCancel={cancelDelete}
           isDeleting={deleteModal.isDeleting}
+        />
+
+        {/* Edit Book Modal */}
+        <EditBookModal
+          isOpen={editBookModal.isOpen}
+          onClose={closeEditModal}
+          onSubmit={handleUpdateBook}
+          isUpdating={editBookModal.isUpdating}
+          book={editBookModal.book}
         />
       </div>
     </Layout>

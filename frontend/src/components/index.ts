@@ -22,4 +22,5 @@ export { BookList } from './BookList';
 export { ChapterCard } from './ChapterCard';
 export { ChapterList } from './ChapterList';
 export { CreateBookModal } from './CreateBookModal';
+export { EditBookModal } from './EditBookModal';
 export { CreateChapterModal } from './CreateChapterModal';

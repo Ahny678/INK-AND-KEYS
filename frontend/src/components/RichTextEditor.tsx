@@ -1,13 +1,13 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { useEditor, EditorContent } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
-import { Button } from './Button';
+import React, { useCallback, useEffect, useState } from "react";
+import { useEditor, EditorContent } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import { Button } from "./Button";
 
 interface RichTextEditorProps {
   content: string;
   onContentChange: (content: string) => void;
   onSave: () => void;
-  saveStatus: 'saved' | 'saving' | 'unsaved' | 'error';
+  saveStatus: "saved" | "saving" | "unsaved" | "error";
   className?: string;
 }
 
@@ -16,7 +16,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
   onContentChange,
   onSave,
   saveStatus,
-  className = '',
+  className = "",
 }) => {
   const [isInitialized, setIsInitialized] = useState(false);
 
@@ -29,8 +29,9 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
     },
     editorProps: {
       attributes: {
-        class: 'focus:outline-none min-h-[400px] p-4',
-        style: 'font-family: system-ui, -apple-system, sans-serif; line-height: 1.6;',
+        class: "focus:outline-none min-h-[400px] p-4",
+        style:
+          "font-family: system-ui, -apple-system, sans-serif; line-height: 1.6;",
       },
     },
   });
@@ -67,39 +68,42 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
     }
   }, [editor]);
 
-  const handleHeading = useCallback((level: 1 | 2 | 3) => {
-    if (editor) {
-      editor.chain().focus().toggleHeading({ level }).run();
-    }
-  }, [editor]);
+  const handleHeading = useCallback(
+    (level: 1 | 2 | 3) => {
+      if (editor) {
+        editor.chain().focus().toggleHeading({ level }).run();
+      }
+    },
+    [editor]
+  );
 
   const getSaveStatusText = () => {
     switch (saveStatus) {
-      case 'saved':
-        return 'All changes saved';
-      case 'saving':
-        return 'Saving...';
-      case 'unsaved':
-        return 'Unsaved changes';
-      case 'error':
-        return 'Error saving';
+      case "saved":
+        return "All changes saved";
+      case "saving":
+        return "Saving...";
+      case "unsaved":
+        return "Unsaved changes";
+      case "error":
+        return "Error saving";
       default:
-        return '';
+        return "";
     }
   };
 
   const getSaveStatusColor = () => {
     switch (saveStatus) {
-      case 'saved':
-        return 'text-green-600';
-      case 'saving':
-        return 'text-blue-600';
-      case 'unsaved':
-        return 'text-yellow-600';
-      case 'error':
-        return 'text-red-600';
+      case "saved":
+        return "text-green-600";
+      case "saving":
+        return "text-blue-600";
+      case "unsaved":
+        return "text-yellow-600";
+      case "error":
+        return "text-red-600";
       default:
-        return 'text-gray-600';
+        return "text-gray-600";
     }
   };
 
@@ -112,7 +116,9 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
   }
 
   return (
-    <div className={`border border-gray-300 rounded-lg overflow-hidden ${className}`}>
+    <div
+      className={`border border-gray-300 rounded-lg overflow-hidden ${className}`}
+    >
       {/* Toolbar */}
       <div className="border-b border-gray-300 bg-gray-50 p-3">
         <div className="flex items-center justify-between">
@@ -122,9 +128,9 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
               type="button"
               onClick={handleBold}
               className={`px-3 py-1 text-sm font-medium rounded border ${
-                editor.isActive('bold') 
-                  ? 'bg-blue-600 text-white border-blue-600' 
-                  : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200'
+                editor.isActive("bold")
+                  ? "bg-blue-600 text-white border-blue-600"
+                  : "bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200"
               }`}
               title="Bold (Ctrl+B)"
             >
@@ -134,24 +140,24 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
               type="button"
               onClick={handleItalic}
               className={`px-3 py-1 text-sm font-medium rounded border ml-1 ${
-                editor.isActive('italic') 
-                  ? 'bg-blue-600 text-white border-blue-600' 
-                  : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200'
+                editor.isActive("italic")
+                  ? "bg-blue-600 text-white border-blue-600"
+                  : "bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200"
               }`}
               title="Italic (Ctrl+I)"
             >
               <em>I</em>
             </button>
-            
+
             {/* Heading buttons */}
             <div className="border-l border-gray-300 pl-2 ml-2">
               <button
                 type="button"
                 onClick={() => handleHeading(1)}
                 className={`px-3 py-1 text-sm font-medium rounded border ${
-                  editor.isActive('heading', { level: 1 }) 
-                    ? 'bg-blue-600 text-white border-blue-600' 
-                    : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200'
+                  editor.isActive("heading", { level: 1 })
+                    ? "bg-blue-600 text-white border-blue-600"
+                    : "bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200"
                 }`}
                 title="Heading 1 (Large Title)"
               >
@@ -161,9 +167,9 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
                 type="button"
                 onClick={() => handleHeading(2)}
                 className={`px-3 py-1 text-sm font-medium rounded border ml-1 ${
-                  editor.isActive('heading', { level: 2 }) 
-                    ? 'bg-blue-600 text-white border-blue-600' 
-                    : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200'
+                  editor.isActive("heading", { level: 2 })
+                    ? "bg-blue-600 text-white border-blue-600"
+                    : "bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200"
                 }`}
                 title="Heading 2 (Medium Title)"
               >
@@ -173,9 +179,9 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
                 type="button"
                 onClick={() => handleHeading(3)}
                 className={`px-3 py-1 text-sm font-medium rounded border ml-1 ${
-                  editor.isActive('heading', { level: 3 }) 
-                    ? 'bg-blue-600 text-white border-blue-600' 
-                    : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200'
+                  editor.isActive("heading", { level: 3 })
+                    ? "bg-blue-600 text-white border-blue-600"
+                    : "bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200"
                 }`}
                 title="Heading 3 (Small Title)"
               >
@@ -189,9 +195,9 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
                 type="button"
                 onClick={handleBulletList}
                 className={`px-3 py-1 text-sm font-medium rounded border ${
-                  editor.isActive('bulletList') 
-                    ? 'bg-blue-600 text-white border-blue-600' 
-                    : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200'
+                  editor.isActive("bulletList")
+                    ? "bg-blue-600 text-white border-blue-600"
+                    : "bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200"
                 }`}
                 title="Bullet List"
               >
@@ -201,9 +207,9 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
                 type="button"
                 onClick={handleOrderedList}
                 className={`px-3 py-1 text-sm font-medium rounded border ml-1 ${
-                  editor.isActive('orderedList') 
-                    ? 'bg-blue-600 text-white border-blue-600' 
-                    : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200'
+                  editor.isActive("orderedList")
+                    ? "bg-blue-600 text-white border-blue-600"
+                    : "bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200"
                 }`}
                 title="Numbered List"
               >
@@ -221,7 +227,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
               variant="primary"
               size="sm"
               onClick={onSave}
-              disabled={saveStatus === 'saving'}
+              disabled={saveStatus === "saving"}
               className="px-4 py-1"
             >
               Save
@@ -236,30 +242,6 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
           <EditorContent editor={editor} />
         </div>
       </div>
-
-      {/* Debug info - remove this in production */}
-      {process.env.NODE_ENV === 'development' && (
-        <div className="border-t border-gray-200 p-2 bg-gray-50 text-xs">
-          <div className="mb-2">
-            <strong>Active states:</strong>
-            <span className="ml-2">
-              Bold: {editor.isActive('bold') ? '✓' : '✗'} |
-              Italic: {editor.isActive('italic') ? '✓' : '✗'} |
-              H1: {editor.isActive('heading', { level: 1 }) ? '✓' : '✗'} |
-              H2: {editor.isActive('heading', { level: 2 }) ? '✓' : '✗'} |
-              H3: {editor.isActive('heading', { level: 3 }) ? '✓' : '✗'} |
-              Bullet: {editor.isActive('bulletList') ? '✓' : '✗'} |
-              Ordered: {editor.isActive('orderedList') ? '✓' : '✗'}
-            </span>
-          </div>
-          <div>
-            <strong>HTML:</strong>
-            <code className="ml-2 text-xs bg-white p-1 rounded">
-              {editor.getHTML()}
-            </code>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
