@@ -1,11 +1,15 @@
 import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateChapterDto, UpdateChapterDto, ChapterResponseDto } from './dto';
+import { CreateChapterDto, UpdateChapterDto, ChapterResponseDto, GenerateCoverDto } from './dto';
 import { Chapter } from '@prisma/client';
+import { AIImageService } from '../ai-image/ai-image.service';
 
 @Injectable()
 export class ChaptersService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private aiImageService: AIImageService,
+  ) {}
 
   async create(bookId: string, userId: string, createChapterDto: CreateChapterDto): Promise<ChapterResponseDto> {
     // First verify the book exists and user owns it
@@ -101,7 +105,12 @@ export class ChaptersService {
 
   async remove(id: string, userId: string): Promise<void> {
     // First check if chapter exists and user owns it
-    await this.findOne(id, userId);
+    const chapter = await this.findOne(id, userId);
+
+    // Clean up cover image from Cloudinary if it exists
+    if (chapter.coverImagePublicId) {
+      await this.aiImageService.deleteFromCloudinary(chapter.coverImagePublicId);
+    }
 
     await this.prisma.chapter.delete({
       where: { id },
@@ -148,12 +157,39 @@ export class ChaptersService {
     return this.findAllByBook(bookId, userId);
   }
 
+  async generateCover(id: string, userId: string, generateCoverDto: GenerateCoverDto): Promise<ChapterResponseDto> {
+    // First check if chapter exists and user owns it
+    const existingChapter = await this.findOne(id, userId);
+
+    // Clean up existing cover image if it exists
+    if (existingChapter.coverImagePublicId) {
+      await this.aiImageService.deleteFromCloudinary(existingChapter.coverImagePublicId);
+    }
+
+    // Generate new cover image
+    const generatedImage = await this.aiImageService.generateCoverImage(generateCoverDto.prompt, 'chapter');
+
+    // Update chapter with new cover image
+    const chapter = await this.prisma.chapter.update({
+      where: { id },
+      data: {
+        coverImageUrl: generatedImage.url,
+        coverImagePublicId: generatedImage.publicId,
+        updatedAt: new Date(),
+      },
+    });
+
+    return this.mapToResponseDto(chapter);
+  }
+
   private mapToResponseDto(chapter: Chapter): ChapterResponseDto {
     return {
       id: chapter.id,
       title: chapter.title,
       content: chapter.content,
       order: chapter.order,
+      coverImageUrl: chapter.coverImageUrl,
+      coverImagePublicId: chapter.coverImagePublicId,
       bookId: chapter.bookId,
       createdAt: chapter.createdAt,
       updatedAt: chapter.updatedAt,

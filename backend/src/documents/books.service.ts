@@ -1,11 +1,15 @@
 import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateBookDto, UpdateBookDto, BookResponseDto } from './dto';
+import { CreateBookDto, UpdateBookDto, BookResponseDto, GenerateCoverDto } from './dto';
 import { Book } from '@prisma/client';
+import { AIImageService } from '../ai-image/ai-image.service';
 
 @Injectable()
 export class BooksService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private aiImageService: AIImageService,
+  ) {}
 
   async create(userId: string, createBookDto: CreateBookDto): Promise<BookResponseDto> {
     const book = await this.prisma.book.create({
@@ -89,7 +93,25 @@ export class BooksService {
 
   async remove(id: string, userId: string): Promise<void> {
     // First check if book exists and user owns it
-    await this.findOne(id, userId);
+    const book = await this.findOne(id, userId);
+
+    // Clean up cover image from Cloudinary if it exists
+    if (book.coverImagePublicId) {
+      await this.aiImageService.deleteFromCloudinary(book.coverImagePublicId);
+    }
+
+    // Get all chapters to clean up their cover images
+    const chapters = await this.prisma.chapter.findMany({
+      where: { bookId: id },
+      select: { coverImagePublicId: true },
+    });
+
+    // Clean up chapter cover images
+    for (const chapter of chapters) {
+      if (chapter.coverImagePublicId) {
+        await this.aiImageService.deleteFromCloudinary(chapter.coverImagePublicId);
+      }
+    }
 
     // Delete the book (chapters will be deleted automatically due to cascade)
     await this.prisma.book.delete({
@@ -97,11 +119,45 @@ export class BooksService {
     });
   }
 
+  async generateCover(id: string, userId: string, generateCoverDto: GenerateCoverDto): Promise<BookResponseDto> {
+    // First check if book exists and user owns it
+    const existingBook = await this.findOne(id, userId);
+
+    // Clean up existing cover image if it exists
+    if (existingBook.coverImagePublicId) {
+      await this.aiImageService.deleteFromCloudinary(existingBook.coverImagePublicId);
+    }
+
+    // Generate new cover image
+    const generatedImage = await this.aiImageService.generateCoverImage(generateCoverDto.prompt, 'book');
+
+    // Update book with new cover image
+    const book = await this.prisma.book.update({
+      where: { id },
+      data: {
+        coverImageUrl: generatedImage.url,
+        coverImagePublicId: generatedImage.publicId,
+        updatedAt: new Date(),
+      },
+      include: {
+        _count: {
+          select: {
+            chapters: true,
+          },
+        },
+      },
+    });
+
+    return this.mapToResponseDto(book);
+  }
+
   private mapToResponseDto(book: Book & { _count?: { chapters: number } }): BookResponseDto {
     return {
       id: book.id,
       title: book.title,
       description: book.description,
+      coverImageUrl: book.coverImageUrl,
+      coverImagePublicId: book.coverImagePublicId,
       userId: book.userId,
       createdAt: book.createdAt,
       updatedAt: book.updatedAt,

@@ -12,7 +12,7 @@ import {
   Put,
 } from '@nestjs/common';
 import { ChaptersService } from './chapters.service';
-import { CreateChapterDto, UpdateChapterDto, ChapterResponseDto } from './dto';
+import { CreateChapterDto, UpdateChapterDto, ChapterResponseDto, GenerateCoverDto } from './dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { User } from '@prisma/client';

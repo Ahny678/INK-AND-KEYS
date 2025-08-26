@@ -99,7 +99,7 @@
   - Write unit tests for AI image service
   - _Requirements: 6.2, 6.3, 6.7, 6.10_
 
-- [ ] 14. Add cover generation endpoints to existing book and chapter controllers
+- [-] 14. Add cover generation endpoints to existing book and chapter controllers
   - Add POST /books/:id/cover endpoint for book cover generation
   - Add POST /chapters/:id/cover endpoint for chapter cover generation
   - Update book and chapter services to handle cover generation
@@ -110,6 +110,7 @@
   - Add coverImageUrl field to Book and Chapter interfaces
   - Update book and chapter services to handle cover generation API calls
   - Add cover generation methods to bookService and chapterService
+  - Skip tests for now
   - _Requirements: 6.1, 6.2, 6.3_
 
 - [ ] 17. Implement text selection and cover generation UI

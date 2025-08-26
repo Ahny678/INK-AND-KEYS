@@ -11,7 +11,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { BooksService } from './books.service';
-import { CreateBookDto, UpdateBookDto, BookResponseDto } from './dto';
+import { CreateBookDto, UpdateBookDto, BookResponseDto, GenerateCoverDto } from './dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { User } from '@prisma/client';
@@ -59,5 +59,15 @@ export class BooksController {
     @CurrentUser() user: User,
   ): Promise<void> {
     return this.booksService.remove(id, user.id);
+  }
+
+  @Post(':id/cover')
+  @HttpCode(HttpStatus.OK)
+  async generateCover(
+    @Param('id') id: string,
+    @CurrentUser() user: User,
+    @Body() generateCoverDto: GenerateCoverDto,
+  ): Promise<BookResponseDto> {
+    return this.booksService.generateCover(id, user.id, generateCoverDto);
   }
 }
