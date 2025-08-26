@@ -1,5 +1,5 @@
 import { api } from './api';
-import { Chapter, CreateChapterRequest, UpdateChapterRequest, ReorderChaptersRequest } from '@/types/chapter';
+import { Chapter, CreateChapterRequest, UpdateChapterRequest, ReorderChaptersRequest, GenerateChapterCoverRequest } from '@/types/chapter';
 
 export const chapterService = {
   // Get all chapters for a specific book
@@ -34,6 +34,12 @@ export const chapterService = {
   // Reorder chapters in a book
   async reorderChapters(bookId: string, data: ReorderChaptersRequest): Promise<Chapter[]> {
     const response = await api.put<Chapter[]>(`/books/${bookId}/chapters/reorder`, data);
+    return response.data;
+  },
+
+  // Generate cover image for a chapter
+  async generateChapterCover(chapterId: string, data: GenerateChapterCoverRequest): Promise<Chapter> {
+    const response = await api.post<Chapter>(`/chapters/${chapterId}/cover`, data);
     return response.data;
   },
 };

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Chapter } from '@/types/chapter';
 import { Button } from './Button';
+import { CoverImageDisplay } from './CoverImageDisplay';
 
 interface ChapterCardProps {
   chapter: Chapter;
@@ -39,7 +40,13 @@ export const ChapterCard: React.FC<ChapterCardProps> = ({
     } ${
       isDragOver ? 'border-l-4 border-l-blue-500 bg-blue-50' : ''
     }`}>
-      <div className="flex justify-between items-start mb-3">
+      <div className="flex gap-3 mb-3">
+        <CoverImageDisplay
+          imageUrl={chapter.coverImageUrl}
+          alt={`Cover for ${chapter.title}`}
+          size="small"
+          className="flex-shrink-0"
+        />
         <div className="flex-1">
           <div className="flex items-center gap-3 mb-2">
             <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-800 text-sm font-semibold">

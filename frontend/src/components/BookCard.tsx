@@ -1,6 +1,7 @@
 import React from 'react';
 import { Book } from '@/types/book';
 import { Button } from './Button';
+import { CoverImageDisplay } from './CoverImageDisplay';
 
 interface BookCardProps {
   book: Book;
@@ -31,7 +32,13 @@ export const BookCard: React.FC<BookCardProps> = ({
 
   return (
     <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 p-6 border border-gray-200">
-      <div className="flex justify-between items-start mb-4">
+      <div className="flex gap-4 mb-4">
+        <CoverImageDisplay
+          imageUrl={book.coverImageUrl}
+          alt={`Cover for ${book.title}`}
+          size="small"
+          className="flex-shrink-0"
+        />
         <div className="flex-1">
           <h3 className="text-xl font-semibold text-gray-900 mb-2 line-clamp-2">
             {book.title}

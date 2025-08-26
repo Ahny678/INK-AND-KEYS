@@ -106,14 +106,14 @@
   - Add cover image cleanup when books/chapters are deleted
   - _Requirements: 6.2, 6.3, 6.5, 6.6, 7.5, 7.6_
 
-- [ ] 15. Update frontend types and services for cover images
+- [x] 15. Update frontend types and services for cover images
   - Add coverImageUrl field to Book and Chapter interfaces
   - Update book and chapter services to handle cover generation API calls
   - Add cover generation methods to bookService and chapterService
   - Skip tests for now
   - _Requirements: 6.1, 6.2, 6.3_
 
-- [ ] 17. Implement text selection and cover generation UI
+- [x] 17. Implement text selection and cover generation UI
   - Create TextSelectionMenu component for highlighted text
   - Add "Use as cover image" option to text selection context menu
   - Implement CoverImageGenerator modal for book cover creation

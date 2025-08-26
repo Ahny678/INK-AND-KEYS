@@ -1,5 +1,5 @@
 import { api } from './api';
-import { Book, CreateBookRequest, UpdateBookRequest } from '@/types/book';
+import { Book, CreateBookRequest, UpdateBookRequest, GenerateBookCoverRequest } from '@/types/book';
 
 export const bookService = {
   // Get all books for the current user
@@ -29,5 +29,11 @@ export const bookService = {
   // Delete a book
   async deleteBook(id: string): Promise<void> {
     await api.delete(`/books/${id}`);
+  },
+
+  // Generate cover image for a book
+  async generateBookCover(id: string, data: GenerateBookCoverRequest): Promise<Book> {
+    const response = await api.post<Book>(`/books/${id}/cover`, data);
+    return response.data;
   },
 };

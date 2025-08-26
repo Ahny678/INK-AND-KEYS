@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { Button } from "./Button";
+import { TextSelectionMenu } from "./TextSelectionMenu";
 
 interface RichTextEditorProps {
   content: string;
@@ -9,6 +10,7 @@ interface RichTextEditorProps {
   onSave: () => void;
   saveStatus: "saved" | "saving" | "unsaved" | "error";
   className?: string;
+  onTextSelectionForCover?: (text: string) => void;
 }
 
 export const RichTextEditor: React.FC<RichTextEditorProps> = ({
@@ -17,8 +19,11 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
   onSave,
   saveStatus,
   className = "",
+  onTextSelectionForCover,
 }) => {
   const [isInitialized, setIsInitialized] = useState(false);
+  const [selectedText, setSelectedText] = useState("");
+  const [selectionPosition, setSelectionPosition] = useState({ x: 0, y: 0 });
 
   const editor = useEditor({
     extensions: [StarterKit],
@@ -26,6 +31,27 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
       onContentChange(html);
+    },
+    onSelectionUpdate: ({ editor }) => {
+      const { from, to } = editor.state.selection;
+      const text = editor.state.doc.textBetween(from, to, " ");
+      
+      if (text.trim() && onTextSelectionForCover) {
+        setSelectedText(text.trim());
+        
+        // Get selection coordinates
+        const selection = window.getSelection();
+        if (selection && selection.rangeCount > 0) {
+          const range = selection.getRangeAt(0);
+          const rect = range.getBoundingClientRect();
+          setSelectionPosition({
+            x: rect.left + rect.width / 2,
+            y: rect.top + window.scrollY,
+          });
+        }
+      } else {
+        setSelectedText("");
+      }
     },
     editorProps: {
       attributes: {
@@ -76,6 +102,16 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
     },
     [editor]
   );
+
+  const handleUseCoverImage = useCallback((text: string) => {
+    if (onTextSelectionForCover) {
+      onTextSelectionForCover(text);
+    }
+  }, [onTextSelectionForCover]);
+
+  const handleCloseSelectionMenu = useCallback(() => {
+    setSelectedText("");
+  }, []);
 
   const getSaveStatusText = () => {
     switch (saveStatus) {
@@ -241,10 +277,20 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
       </div>
 
       {/* Editor content */}
-      <div className="bg-white">
+      <div className="bg-white relative">
         <div className="tiptap-editor">
           <EditorContent editor={editor} />
         </div>
+        
+        {/* Text Selection Menu */}
+        {onTextSelectionForCover && (
+          <TextSelectionMenu
+            selectedText={selectedText}
+            position={selectionPosition}
+            onUseCoverImage={handleUseCoverImage}
+            onClose={handleCloseSelectionMenu}
+          />
+        )}
       </div>
     </div>
   );

@@ -24,3 +24,9 @@ export { ChapterList } from './ChapterList';
 export { CreateBookModal } from './CreateBookModal';
 export { EditBookModal } from './EditBookModal';
 export { CreateChapterModal } from './CreateChapterModal';
+
+// Cover Image Components
+export { TextSelectionMenu } from './TextSelectionMenu';
+export { CoverImageGenerator } from './CoverImageGenerator';
+export { ImageGenerationProgress } from './ImageGenerationProgress';
+export { CoverImageDisplay } from './CoverImageDisplay';

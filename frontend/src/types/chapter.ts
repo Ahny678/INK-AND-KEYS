@@ -2,6 +2,8 @@ export interface Chapter {
   id: string;
   title: string;
   content: string;
+  coverImageUrl?: string;
+  coverImagePublicId?: string;
   order: number;
   bookId: string;
   createdAt: string;
@@ -22,4 +24,8 @@ export interface UpdateChapterRequest {
 
 export interface ReorderChaptersRequest {
   chapterIds: string[];
+}
+
+export interface GenerateChapterCoverRequest {
+  prompt: string;
 }
