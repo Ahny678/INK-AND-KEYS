@@ -6,7 +6,9 @@ import {
   ChapterList, 
   LoadingSpinner,
   CreateChapterModal,
-  DeleteConfirmationModal
+  DeleteConfirmationModal,
+  CoverImageDisplay,
+  CoverImageGenerator
 } from '@/components';
 import { bookService, chapterService } from '@/services';
 import { Book, Chapter } from '@/types';
@@ -31,6 +33,7 @@ export const BookPage: React.FC = () => {
   });
 
   const [isReordering, setIsReordering] = useState(false);
+  const [showBookCoverGenerator, setShowBookCoverGenerator] = useState(false);
 
   // Load book and chapters on component mount
   useEffect(() => {
@@ -152,6 +155,18 @@ export const BookPage: React.FC = () => {
     });
   };
 
+  const handleGenerateBookCover = async (prompt: string) => {
+    if (!book) return;
+
+    try {
+      const updatedBook = await bookService.generateBookCover(book.id, { prompt });
+      setBook(updatedBook);
+    } catch (err) {
+      console.error('Error generating book cover:', err);
+      throw new Error('Failed to generate book cover. Please try again.');
+    }
+  };
+
   if (loading) {
     return (
       <Layout>
@@ -198,6 +213,17 @@ export const BookPage: React.FC = () => {
                   </svg>
                   Back to Books
                 </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setShowBookCoverGenerator(true)}
+                  className="flex items-center gap-2"
+                  title="Generate book cover"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  Generate Book Cover
+                </Button>
               </div>
               <h1 className="text-3xl font-bold text-gray-900">{book.title}</h1>
               {book.description && (
@@ -212,26 +238,37 @@ export const BookPage: React.FC = () => {
               </div>
             </div>
             
-            <div className="flex gap-3">
-              <Button
-                onClick={() => setCreateChapterModal(true)}
-                className="flex items-center gap-2"
-              >
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+            {/* Book Cover Image */}
+            <div className="flex items-start gap-4">
+              <CoverImageDisplay
+                imageUrl={book.coverImageUrl}
+                alt={`Cover for ${book.title}`}
+                size="large"
+                className="cursor-pointer hover:opacity-80 transition-opacity"
+                onClick={() => setShowBookCoverGenerator(true)}
+              />
+              
+              <div className="flex flex-col gap-3">
+                <Button
+                  onClick={() => setCreateChapterModal(true)}
+                  className="flex items-center gap-2"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                  />
-                </svg>
-                Add Chapter
-              </Button>
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                    />
+                  </svg>
+                  Add Chapter
+                </Button>
+              </div>
             </div>
           </div>
         </div>
@@ -297,6 +334,15 @@ export const BookPage: React.FC = () => {
           onConfirm={confirmDelete}
           onCancel={cancelDelete}
           isDeleting={deleteModal.isDeleting}
+        />
+
+        {/* Book Cover Generation Modal */}
+        <CoverImageGenerator
+          isOpen={showBookCoverGenerator}
+          onClose={() => setShowBookCoverGenerator(false)}
+          onGenerate={handleGenerateBookCover}
+          title="Generate Book Cover"
+          type="book"
         />
       </div>
     </Layout>

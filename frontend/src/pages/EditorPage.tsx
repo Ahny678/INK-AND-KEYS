@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Layout, RichTextEditor, Button, LoadingSpinner } from '@/components';
+import { Layout, RichTextEditor, Button, LoadingSpinner, CoverImageDisplay, CoverImageGenerator } from '@/components';
 import { chapterService, bookService } from '@/services';
 import { useAutosave } from '@/hooks/useAutosave';
 import { Chapter, Book } from '@/types';
@@ -16,6 +16,8 @@ export const EditorPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isTitleEditing, setIsTitleEditing] = useState(false);
   const [currentChapterOrder, setCurrentChapterOrder] = useState<number>(0);
+  const [showCoverGenerator, setShowCoverGenerator] = useState(false);
+  const [coverGenerationPrompt, setCoverGenerationPrompt] = useState('');
 
   // Autosave hook for content
   const { saveStatus, triggerSave, updateContent } = useAutosave({
@@ -152,6 +154,28 @@ export const EditorPage: React.FC = () => {
     }
   }, [handleTitleSave, chapter]);
 
+  const handleTextSelectionForCover = useCallback((selectedText: string) => {
+    setCoverGenerationPrompt(selectedText);
+    setShowCoverGenerator(true);
+  }, []);
+
+  const handleGenerateChapterCover = useCallback(async (prompt: string) => {
+    if (!chapter) return;
+
+    try {
+      const updatedChapter = await chapterService.generateChapterCover(chapter.id, { prompt });
+      setChapter(updatedChapter);
+    } catch (err) {
+      console.error('Error generating chapter cover:', err);
+      throw new Error('Failed to generate cover image. Please try again.');
+    }
+  }, [chapter]);
+
+  const handleCloseCoverGenerator = useCallback(() => {
+    setShowCoverGenerator(false);
+    setCoverGenerationPrompt('');
+  }, []);
+
   if (loading) {
     return (
       <Layout>
@@ -196,7 +220,7 @@ export const EditorPage: React.FC = () => {
       <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
         {/* Chapter Header */}
         <div className="mb-6">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-start justify-between mb-4">
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-2">
                 <Button
@@ -219,6 +243,17 @@ export const EditorPage: React.FC = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                   </svg>
                   Refresh Order
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setShowCoverGenerator(true)}
+                  className="flex items-center gap-2"
+                  title="Generate chapter cover"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  Generate Cover
                 </Button>
               </div>
               
@@ -248,6 +283,17 @@ export const EditorPage: React.FC = () => {
                 </h1>
               )}
             </div>
+            
+            {/* Chapter Cover Image */}
+            <div className="ml-6">
+              <CoverImageDisplay
+                imageUrl={chapter.coverImageUrl}
+                alt={`Cover for ${title}`}
+                size="medium"
+                className="cursor-pointer hover:opacity-80 transition-opacity"
+                onClick={() => setShowCoverGenerator(true)}
+              />
+            </div>
           </div>
           
           {/* Chapter metadata */}
@@ -266,8 +312,19 @@ export const EditorPage: React.FC = () => {
             onSave={triggerSave}
             saveStatus={saveStatus}
             className="min-h-[600px]"
+            onTextSelectionForCover={handleTextSelectionForCover}
           />
         </div>
+
+        {/* Cover Generation Modal */}
+        <CoverImageGenerator
+          isOpen={showCoverGenerator}
+          onClose={handleCloseCoverGenerator}
+          onGenerate={handleGenerateChapterCover}
+          initialPrompt={coverGenerationPrompt}
+          title="Generate Chapter Cover"
+          type="chapter"
+        />
       </div>
     </Layout>
   );
