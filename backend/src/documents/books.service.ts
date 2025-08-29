@@ -151,6 +151,44 @@ export class BooksService {
     return this.mapToResponseDto(book);
   }
 
+  async uploadCover(id: string, userId: string, file: Express.Multer.File): Promise<BookResponseDto> {
+    // First check if book exists and user owns it
+    const existingBook = await this.findOne(id, userId);
+
+    // Validate file is an image
+    if (!file || !file.mimetype.startsWith('image/')) {
+      throw new ForbiddenException('Only image files are allowed for cover upload');
+    }
+
+    // Clean up existing cover image if it exists
+    if (existingBook.coverImagePublicId) {
+      await this.aiImageService.deleteFromCloudinary(existingBook.coverImagePublicId);
+    }
+
+    // Upload new cover image to Cloudinary
+    const folder = `ink-and-keys/book-covers`;
+    const upload = await this.aiImageService.uploadToCloudinary(file.buffer, folder);
+
+    // Update book with new cover image
+    const book = await this.prisma.book.update({
+      where: { id },
+      data: {
+        coverImageUrl: upload.url,
+        coverImagePublicId: upload.publicId,
+        updatedAt: new Date(),
+      },
+      include: {
+        _count: {
+          select: {
+            chapters: true,
+          },
+        },
+      },
+    });
+
+    return this.mapToResponseDto(book);
+  }
+
   private mapToResponseDto(book: Book & { _count?: { chapters: number } }): BookResponseDto {
     return {
       id: book.id,

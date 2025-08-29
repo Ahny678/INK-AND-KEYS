@@ -15,6 +15,9 @@ import { CreateBookDto, UpdateBookDto, BookResponseDto, GenerateCoverDto } from 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { User } from '@prisma/client';
+import { UseInterceptors, UploadedFile } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { multerConfig } from '../files/config/multer.config';
 
 @Controller('books')
 @UseGuards(JwtAuthGuard)
@@ -69,5 +72,16 @@ export class BooksController {
     @Body() generateCoverDto: GenerateCoverDto,
   ): Promise<BookResponseDto> {
     return this.booksService.generateCover(id, user.id, generateCoverDto);
+  }
+
+  @Post(':id/cover/upload')
+  @UseInterceptors(FileInterceptor('file', multerConfig))
+  @HttpCode(HttpStatus.OK)
+  async uploadCover(
+    @Param('id') id: string,
+    @CurrentUser() user: User,
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<BookResponseDto> {
+    return this.booksService.uploadCover(id, user.id, file);
   }
 }

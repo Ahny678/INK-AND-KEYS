@@ -36,4 +36,15 @@ export const bookService = {
     const response = await api.post<Book>(`/books/${id}/cover`, data);
     return response.data;
   },
+
+  // Upload cover image for a book
+  async uploadBookCover(id: string, file: File): Promise<Book> {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const response = await api.post<Book>(`/books/${id}/cover/upload`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return response.data;
+  },
 };

@@ -167,6 +167,18 @@ export const BookPage: React.FC = () => {
     }
   };
 
+  const handleUploadBookCover = async (file: File) => {
+    if (!book) return;
+
+    try {
+      const updatedBook = await bookService.uploadBookCover(book.id, file);
+      setBook(updatedBook);
+    } catch (err) {
+      console.error('Error uploading book cover:', err);
+      throw new Error('Failed to upload book cover. Please try again.');
+    }
+  };
+
   if (loading) {
     return (
       <Layout>
@@ -341,6 +353,7 @@ export const BookPage: React.FC = () => {
           isOpen={showBookCoverGenerator}
           onClose={() => setShowBookCoverGenerator(false)}
           onGenerate={handleGenerateBookCover}
+          onUpload={handleUploadBookCover}
           title="Generate Book Cover"
           type="book"
         />

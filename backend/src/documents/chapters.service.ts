@@ -182,6 +182,37 @@ export class ChaptersService {
     return this.mapToResponseDto(chapter);
   }
 
+  async uploadCover(id: string, userId: string, file: Express.Multer.File): Promise<ChapterResponseDto> {
+    // First check if chapter exists and user owns it
+    const existingChapter = await this.findOne(id, userId);
+
+    // Validate file is an image
+    if (!file || !file.mimetype.startsWith('image/')) {
+      throw new BadRequestException('Only image files are allowed for cover upload');
+    }
+
+    // Clean up existing cover image if it exists
+    if (existingChapter.coverImagePublicId) {
+      await this.aiImageService.deleteFromCloudinary(existingChapter.coverImagePublicId);
+    }
+
+    // Upload new cover image to Cloudinary
+    const folder = `ink-and-keys/chapter-covers`;
+    const upload = await this.aiImageService.uploadToCloudinary(file.buffer, folder);
+
+    // Update chapter with new cover image
+    const chapter = await this.prisma.chapter.update({
+      where: { id },
+      data: {
+        coverImageUrl: upload.url,
+        coverImagePublicId: upload.publicId,
+        updatedAt: new Date(),
+      },
+    });
+
+    return this.mapToResponseDto(chapter);
+  }
+
   private mapToResponseDto(chapter: Chapter): ChapterResponseDto {
     return {
       id: chapter.id,

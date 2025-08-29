@@ -42,4 +42,15 @@ export const chapterService = {
     const response = await api.post<Chapter>(`/chapters/${chapterId}/cover`, data);
     return response.data;
   },
+
+  // Upload cover image for a chapter
+  async uploadChapterCover(chapterId: string, file: File): Promise<Chapter> {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const response = await api.post<Chapter>(`/chapters/${chapterId}/cover/upload`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return response.data;
+  },
 };

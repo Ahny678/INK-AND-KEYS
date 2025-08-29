@@ -171,6 +171,18 @@ export const EditorPage: React.FC = () => {
     }
   }, [chapter]);
 
+  const handleUploadChapterCover = useCallback(async (file: File) => {
+    if (!chapter) return;
+
+    try {
+      const updatedChapter = await chapterService.uploadChapterCover(chapter.id, file);
+      setChapter(updatedChapter);
+    } catch (err) {
+      console.error('Error uploading chapter cover:', err);
+      throw new Error('Failed to upload cover image. Please try again.');
+    }
+  }, [chapter]);
+
   const handleCloseCoverGenerator = useCallback(() => {
     setShowCoverGenerator(false);
     setCoverGenerationPrompt('');
@@ -321,6 +333,7 @@ export const EditorPage: React.FC = () => {
           isOpen={showCoverGenerator}
           onClose={handleCloseCoverGenerator}
           onGenerate={handleGenerateChapterCover}
+          onUpload={handleUploadChapterCover}
           initialPrompt={coverGenerationPrompt}
           title="Generate Chapter Cover"
           type="chapter"

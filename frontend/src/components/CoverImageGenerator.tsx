@@ -6,6 +6,7 @@ interface CoverImageGeneratorProps {
   isOpen: boolean;
   onClose: () => void;
   onGenerate: (prompt: string) => Promise<void>;
+  onUpload?: (file: File) => Promise<void>;
   initialPrompt?: string;
   title?: string;
   type?: "book" | "chapter";
@@ -15,6 +16,7 @@ export const CoverImageGenerator: React.FC<CoverImageGeneratorProps> = ({
   isOpen,
   onClose,
   onGenerate,
+  onUpload,
   initialPrompt = "",
   title = "Generate Cover Image",
   type = "chapter",
@@ -22,21 +24,37 @@ export const CoverImageGenerator: React.FC<CoverImageGeneratorProps> = ({
   const [prompt, setPrompt] = useState(initialPrompt);
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [mode, setMode] = useState<'ai' | 'upload'>('ai');
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const handleGenerate = async () => {
-    if (!prompt.trim()) {
-      setError("Please enter a description for the cover image");
-      return;
-    }
-
     setIsGenerating(true);
     setError(null);
 
     try {
-      await onGenerate(prompt.trim());
+      if (mode === 'ai') {
+        if (!prompt.trim()) {
+          setError("Please enter a description for the cover image");
+          setIsGenerating(false);
+          return;
+        }
+        await onGenerate(prompt.trim());
+      } else {
+        if (!onUpload) {
+          setError('Upload not supported');
+          setIsGenerating(false);
+          return;
+        }
+        if (!selectedFile) {
+          setError('Please select an image file to upload');
+          setIsGenerating(false);
+          return;
+        }
+        await onUpload(selectedFile);
+      }
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to generate cover image");
+      setError(err instanceof Error ? err.message : (mode === 'ai' ? 'Failed to generate cover image' : 'Failed to upload cover image'));
     } finally {
       setIsGenerating(false);
     }
@@ -46,6 +64,8 @@ export const CoverImageGenerator: React.FC<CoverImageGeneratorProps> = ({
     if (!isGenerating) {
       setPrompt("");
       setError(null);
+      setMode('ai');
+      setSelectedFile(null);
       onClose();
     }
   };
@@ -75,25 +95,57 @@ export const CoverImageGenerator: React.FC<CoverImageGeneratorProps> = ({
           {isGenerating ? (
             <ImageGenerationProgress
               isGenerating={true}
-              message={`Generating ${type} cover image...`}
+              message={`${mode === 'ai' ? 'Generating' : 'Uploading'} ${type} cover image...`}
               error={error || undefined}
             />
           ) : (
             <div className="space-y-4">
-              <div>
-                <label htmlFor="prompt" className="block text-sm font-medium text-gray-700 mb-2">
-                  Describe the cover image you want to generate:
-                </label>
-                <textarea
-                  id="prompt"
-                  value={prompt}
-                  onChange={(e) => setPrompt(e.target.value)}
-                  placeholder="Enter a description for your cover image..."
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-                  rows={4}
+              <div className="flex gap-2">
+                <button
+                  className={`px-3 py-1 rounded-md border ${mode === 'ai' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300'}`}
+                  onClick={() => setMode('ai')}
                   disabled={isGenerating}
-                />
+                >
+                  Use AI
+                </button>
+                <button
+                  className={`px-3 py-1 rounded-md border ${mode === 'upload' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300'}`}
+                  onClick={() => setMode('upload')}
+                  disabled={isGenerating}
+                >
+                  Upload Image
+                </button>
               </div>
+
+              {mode === 'ai' ? (
+                <div>
+                  <label htmlFor="prompt" className="block text-sm font-medium text-gray-700 mb-2">
+                    Describe the cover image you want to generate:
+                  </label>
+                  <textarea
+                    id="prompt"
+                    value={prompt}
+                    onChange={(e) => setPrompt(e.target.value)}
+                    placeholder="Enter a description for your cover image..."
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                    rows={4}
+                    disabled={isGenerating}
+                  />
+                </div>
+              ) : (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Select an image to upload (JPEG/PNG)
+                  </label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => setSelectedFile(e.target.files && e.target.files[0] ? e.target.files[0] : null)}
+                    disabled={isGenerating}
+                    className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
+                  />
+                </div>
+              )}
 
               {error && (
                 <div className="p-3 bg-red-50 border border-red-200 rounded-md">
@@ -113,10 +165,10 @@ export const CoverImageGenerator: React.FC<CoverImageGeneratorProps> = ({
                 <Button
                   variant="primary"
                   onClick={handleGenerate}
-                  disabled={isGenerating || !prompt.trim()}
+                  disabled={isGenerating || (mode === 'ai' ? !prompt.trim() : !selectedFile)}
                   className="flex-1"
                 >
-                  Generate Cover
+                  {mode === 'ai' ? 'Generate Cover' : 'Upload Cover'}
                 </Button>
               </div>
             </div>
