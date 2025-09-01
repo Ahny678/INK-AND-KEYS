@@ -4,6 +4,7 @@ export interface FileUploadResponse {
   id: string;
   originalName: string;
   fileName: string;
+  filePath: string;
   mimeType: string;
   size: number;
   status: 'UPLOADED' | 'PROCESSING' | 'PROCESSED' | 'FAILED';
