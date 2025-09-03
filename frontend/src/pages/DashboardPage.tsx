@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { 
-  Layout, 
-  Button, 
-  BookList, 
-  EmptyState, 
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  Layout,
+  Button,
+  BookList,
+  EmptyState,
   DeleteConfirmationModal,
   CreateBookModal,
-  EditBookModal
-} from '@/components';
-import { bookService } from '@/services';
-import { Book } from '@/types/book';
+  EditBookModal,
+} from "@/components";
+import { bookService } from "@/services";
+import { Book } from "@/types/book";
 
 export const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
@@ -51,22 +51,25 @@ export const DashboardPage: React.FC = () => {
       const fetchedBooks = await bookService.getBooks();
       setBooks(fetchedBooks);
     } catch (err) {
-      console.error('Failed to load books:', err);
-      setError('Failed to load books. Please try again.');
+      console.error("Failed to load books:", err);
+      setError("Failed to load books. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleCreateBook = async (data: { title: string; description?: string }) => {
+  const handleCreateBook = async (data: {
+    title: string;
+    description?: string;
+  }) => {
     try {
       setIsCreatingBook(true);
       const newBook = await bookService.createBook(data);
-      setBooks(prev => [newBook, ...prev]);
+      setBooks((prev) => [newBook, ...prev]);
       setCreateBookModal(false);
     } catch (err) {
-      console.error('Failed to create book:', err);
-      setError('Failed to create book. Please try again.');
+      console.error("Failed to create book:", err);
+      setError("Failed to create book. Please try again.");
     } finally {
       setIsCreatingBook(false);
     }
@@ -84,20 +87,26 @@ export const DashboardPage: React.FC = () => {
     });
   };
 
-  const handleUpdateBook = async (data: { title: string; description?: string }) => {
+  const handleUpdateBook = async (data: {
+    title: string;
+    description?: string;
+  }) => {
     if (!editBookModal.book) return;
 
     try {
-      setEditBookModal(prev => ({ ...prev, isUpdating: true }));
-      const updatedBook = await bookService.updateBook(editBookModal.book.id, data);
-      
+      setEditBookModal((prev) => ({ ...prev, isUpdating: true }));
+      const updatedBook = await bookService.updateBook(
+        editBookModal.book.id,
+        data
+      );
+
       // Update book in local state
-      setBooks(prev => 
-        prev.map(book => 
+      setBooks((prev) =>
+        prev.map((book) =>
           book.id === editBookModal.book!.id ? updatedBook : book
         )
       );
-      
+
       // Close modal
       setEditBookModal({
         isOpen: false,
@@ -105,9 +114,9 @@ export const DashboardPage: React.FC = () => {
         isUpdating: false,
       });
     } catch (err) {
-      console.error('Failed to update book:', err);
-      setError('Failed to update book. Please try again.');
-      setEditBookModal(prev => ({ ...prev, isUpdating: false }));
+      console.error("Failed to update book:", err);
+      setError("Failed to update book. Please try again.");
+      setEditBookModal((prev) => ({ ...prev, isUpdating: false }));
     }
   };
 
@@ -123,14 +132,14 @@ export const DashboardPage: React.FC = () => {
     if (!deleteModal.book) return;
 
     try {
-      setDeleteModal(prev => ({ ...prev, isDeleting: true }));
+      setDeleteModal((prev) => ({ ...prev, isDeleting: true }));
       await bookService.deleteBook(deleteModal.book.id);
-      
+
       // Remove book from local state
-      setBooks(prev => 
-        prev.filter(book => book.id !== deleteModal.book!.id)
+      setBooks((prev) =>
+        prev.filter((book) => book.id !== deleteModal.book!.id)
       );
-      
+
       // Close modal
       setDeleteModal({
         isOpen: false,
@@ -138,9 +147,9 @@ export const DashboardPage: React.FC = () => {
         isDeleting: false,
       });
     } catch (err) {
-      console.error('Failed to delete book:', err);
-      setError('Failed to delete book. Please try again.');
-      setDeleteModal(prev => ({ ...prev, isDeleting: false }));
+      console.error("Failed to delete book:", err);
+      setError("Failed to delete book. Please try again.");
+      setDeleteModal((prev) => ({ ...prev, isDeleting: false }));
     }
   };
 
@@ -168,9 +177,11 @@ export const DashboardPage: React.FC = () => {
           <div className="flex justify-between items-center">
             <div>
               <h1 className="text-3xl font-bold text-gray-900">My Books</h1>
-              <p className="text-gray-600 mt-2">Manage your book collection and start writing</p>
+              <p className="text-gray-600 mt-2">
+                Manage your book collection and start writing
+              </p>
             </div>
-            
+
             {/* Action buttons - only show when not loading and has books */}
             {!loading && books.length > 0 && (
               <div className="flex gap-3">
@@ -236,7 +247,7 @@ export const DashboardPage: React.FC = () => {
           {!loading && books.length === 0 && !error ? (
             <EmptyState
               onCreateDocument={() => setCreateBookModal(true)}
-              onUploadFile={() => {}} // We'll handle this differently for books
+              // onUploadFile={() => {}} // We'll handle this differently for books
             />
           ) : (
             <div className="p-6">
@@ -262,7 +273,7 @@ export const DashboardPage: React.FC = () => {
         {/* Delete Confirmation Modal */}
         <DeleteConfirmationModal
           isOpen={deleteModal.isOpen}
-          documentTitle={deleteModal.book?.title || ''}
+          documentTitle={deleteModal.book?.title || ""}
           onConfirm={confirmDelete}
           onCancel={cancelDelete}
           isDeleting={deleteModal.isDeleting}

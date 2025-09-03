@@ -1,35 +1,47 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { Layout, RichTextEditor, Button, LoadingSpinner, CoverImageDisplay, CoverImageGenerator } from '@/components';
-import { chapterService, bookService } from '@/services';
-import { useAutosave } from '@/hooks/useAutosave';
-import { Chapter, Book } from '@/types';
+import React, { useEffect, useState, useCallback } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import {
+  Layout,
+  RichTextEditor,
+  Button,
+  LoadingSpinner,
+  CoverImageDisplay,
+  CoverImageGenerator,
+} from "@/components";
+import { chapterService, bookService } from "@/services";
+import { useAutosave } from "@/hooks/useAutosave";
+import { Chapter, Book } from "@/types";
 
 export const EditorPage: React.FC = () => {
-  const { bookId, chapterId } = useParams<{ bookId: string; chapterId: string }>();
+  const { bookId, chapterId } = useParams<{
+    bookId: string;
+    chapterId: string;
+  }>();
   const navigate = useNavigate();
   const [book, setBook] = useState<Book | null>(null);
   const [chapter, setChapter] = useState<Chapter | null>(null);
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isTitleEditing, setIsTitleEditing] = useState(false);
-  const [currentChapterOrder, setCurrentChapterOrder] = useState<number>(0);
   const [showCoverGenerator, setShowCoverGenerator] = useState(false);
-  const [coverGenerationPrompt, setCoverGenerationPrompt] = useState('');
+  const [coverGenerationPrompt, setCoverGenerationPrompt] = useState("");
 
   // Autosave hook for content
   const { saveStatus, triggerSave, updateContent } = useAutosave({
-    onSave: useCallback(async (newContent: string) => {
-      if (!chapter || !bookId) return;
-      
-      await chapterService.updateChapter(bookId, chapter.id, {
-        content: newContent,
-        title: title,
-      });
-    }, [chapter, bookId, title]),
-    delay: 2000, // 2 seconds
+    onSave: useCallback(
+      async (newContent: string) => {
+        if (!chapter || !bookId) return;
+
+        await chapterService.updateChapter(bookId, chapter.id, {
+          content: newContent,
+          title: title,
+        });
+      },
+      [chapter, bookId, title]
+    ),
+    delay: 2000,
     enabled: !!chapter && !!bookId,
   });
 
@@ -37,7 +49,7 @@ export const EditorPage: React.FC = () => {
   useEffect(() => {
     const loadBookAndChapter = async () => {
       if (!bookId) {
-        setError('Book ID is required');
+        setError("Book ID is required");
         setLoading(false);
         return;
       }
@@ -46,40 +58,43 @@ export const EditorPage: React.FC = () => {
         setLoading(true);
         setError(null);
 
-        // Load book first
         const bookData = await bookService.getBook(bookId);
         setBook(bookData);
 
-        if (!chapterId) {
+        if (!chapterId || chapterId === "new") {
           // New chapter - create it first
           try {
             const newChapter = await chapterService.createChapter(bookId, {
-              title: 'Untitled Chapter',
+              title: "Untitled Chapter",
             });
             setChapter(newChapter);
             setTitle(newChapter.title);
-            setContent(newChapter.content || '');
-            // Replace URL with the new chapter ID
-            navigate(`/books/${bookId}/chapters/${newChapter.id}/edit`, { replace: true });
+            setContent(newChapter.content || "");
+            navigate(`/books/${bookId}/chapters/${newChapter.id}/edit`, {
+              replace: true,
+            });
           } catch (err) {
-            setError('Failed to create new chapter');
-            console.error('Error creating chapter:', err);
+            setError("Failed to create new chapter");
+            console.error("Error creating chapter:", err);
           }
         } else {
           // Load existing chapter
           try {
-            const chapterData = await chapterService.getChapter(bookId, chapterId);
+            const chapterData = await chapterService.getChapter(
+              bookId,
+              chapterId
+            );
             setChapter(chapterData);
             setTitle(chapterData.title);
-            setContent(chapterData.content || '');
+            setContent(chapterData.content || "");
           } catch (err) {
-            setError('Failed to load chapter');
-            console.error('Error loading chapter:', err);
+            setError("Failed to load chapter");
+            console.error("Error loading chapter:", err);
           }
         }
       } catch (err) {
-        setError('Failed to load book');
-        console.error('Error loading book:', err);
+        setError("Failed to load book");
+        console.error("Error loading book:", err);
       } finally {
         setLoading(false);
       }
@@ -88,47 +103,13 @@ export const EditorPage: React.FC = () => {
     loadBookAndChapter();
   }, [bookId, chapterId, navigate]);
 
-  // Function to get current chapter order from book's chapters
-  const getCurrentChapterOrder = useCallback(async () => {
-    if (!bookId || !chapterId) return;
-
-    try {
-      const chapters = await chapterService.getChaptersByBook(bookId);
-      const currentChapter = chapters.find(c => c.id === chapterId);
-      if (currentChapter) {
-        // Sort chapters by order and find the current chapter's position
-        const sortedChapters = chapters.sort((a, b) => a.order - b.order);
-        const orderIndex = sortedChapters.findIndex(c => c.id === chapterId);
-        setCurrentChapterOrder(orderIndex + 1);
-      }
-    } catch (err) {
-      console.error('Failed to get current chapter order:', err);
-    }
-  }, [bookId, chapterId]);
-
-  // Update chapter order when component mounts or when chapter changes
-  useEffect(() => {
-    if (chapter) {
-      getCurrentChapterOrder();
-    }
-  }, [chapter, getCurrentChapterOrder]);
-
-  // Refresh chapter order when page becomes visible (e.g., after navigation back from BookPage)
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (!document.hidden && chapter) {
-        getCurrentChapterOrder();
-      }
-    };
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
-  }, [chapter, getCurrentChapterOrder]);
-
-  const handleContentChange = useCallback((newContent: string) => {
-    setContent(newContent);
-    updateContent(newContent);
-  }, [updateContent]);
+  const handleContentChange = useCallback(
+    (newContent: string) => {
+      setContent(newContent);
+      updateContent(newContent);
+    },
+    [updateContent]
+  );
 
   const handleTitleSave = useCallback(async () => {
     if (!chapter || !bookId || !title.trim()) return;
@@ -137,55 +118,70 @@ export const EditorPage: React.FC = () => {
       await chapterService.updateChapter(bookId, chapter.id, {
         title: title.trim(),
       });
-      setChapter(prev => prev ? { ...prev, title: title.trim() } : null);
+      setChapter((prev) => (prev ? { ...prev, title: title.trim() } : null));
       setIsTitleEditing(false);
     } catch (err) {
-      console.error('Error saving title:', err);
-      setError('Failed to save title');
+      console.error("Error saving title:", err);
+      setError("Failed to save title");
     }
   }, [chapter, bookId, title]);
 
-  const handleTitleKeyPress = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      handleTitleSave();
-    } else if (e.key === 'Escape') {
-      setTitle(chapter?.title || '');
-      setIsTitleEditing(false);
-    }
-  }, [handleTitleSave, chapter]);
+  const handleTitleKeyPress = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "Enter") {
+        handleTitleSave();
+      } else if (e.key === "Escape") {
+        setTitle(chapter?.title || "");
+        setIsTitleEditing(false);
+      }
+    },
+    [handleTitleSave, chapter]
+  );
 
   const handleTextSelectionForCover = useCallback((selectedText: string) => {
     setCoverGenerationPrompt(selectedText);
     setShowCoverGenerator(true);
   }, []);
 
-  const handleGenerateChapterCover = useCallback(async (prompt: string) => {
-    if (!chapter) return;
+  const handleGenerateChapterCover = useCallback(
+    async (prompt: string) => {
+      if (!chapter) return;
 
-    try {
-      const updatedChapter = await chapterService.generateChapterCover(chapter.id, { prompt });
-      setChapter(updatedChapter);
-    } catch (err) {
-      console.error('Error generating chapter cover:', err);
-      throw new Error('Failed to generate cover image. Please try again.');
-    }
-  }, [chapter]);
+      try {
+        const updatedChapter = await chapterService.generateChapterCover(
+          chapter.id,
+          { prompt }
+        );
+        setChapter(updatedChapter);
+      } catch (err) {
+        console.error("Error generating chapter cover:", err);
+        throw new Error("Failed to generate cover image. Please try again.");
+      }
+    },
+    [chapter]
+  );
 
-  const handleUploadChapterCover = useCallback(async (file: File) => {
-    if (!chapter) return;
+  const handleUploadChapterCover = useCallback(
+    async (file: File) => {
+      if (!chapter) return;
 
-    try {
-      const updatedChapter = await chapterService.uploadChapterCover(chapter.id, file);
-      setChapter(updatedChapter);
-    } catch (err) {
-      console.error('Error uploading chapter cover:', err);
-      throw new Error('Failed to upload cover image. Please try again.');
-    }
-  }, [chapter]);
+      try {
+        const updatedChapter = await chapterService.uploadChapterCover(
+          chapter.id,
+          file
+        );
+        setChapter(updatedChapter);
+      } catch (err) {
+        console.error("Error uploading chapter cover:", err);
+        throw new Error("Failed to upload cover image. Please try again.");
+      }
+    },
+    [chapter]
+  );
 
   const handleCloseCoverGenerator = useCallback(() => {
     setShowCoverGenerator(false);
-    setCoverGenerationPrompt('');
+    setCoverGenerationPrompt("");
   }, []);
 
   if (loading) {
@@ -240,41 +236,51 @@ export const EditorPage: React.FC = () => {
                   onClick={() => navigate(`/books/${bookId}`)}
                   className="flex items-center gap-2"
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                    />
                   </svg>
                   Back to Book
                 </Button>
-                <Button
-                  variant="outline"
-                  onClick={getCurrentChapterOrder}
-                  className="flex items-center gap-2"
-                  title="Refresh chapter order"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                  </svg>
-                  Refresh Order
-                </Button>
+
                 <Button
                   variant="outline"
                   onClick={() => setShowCoverGenerator(true)}
                   className="flex items-center gap-2"
                   title="Generate chapter cover"
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                    />
                   </svg>
                   Generate Cover
                 </Button>
               </div>
-              
+
               <div className="mb-2">
                 <h2 className="text-lg font-medium text-gray-600">
                   {book.title}
                 </h2>
               </div>
-              
+
               {isTitleEditing ? (
                 <input
                   type="text"
@@ -295,7 +301,7 @@ export const EditorPage: React.FC = () => {
                 </h1>
               )}
             </div>
-            
+
             {/* Chapter Cover Image */}
             <div className="ml-6">
               <CoverImageDisplay
@@ -307,12 +313,16 @@ export const EditorPage: React.FC = () => {
               />
             </div>
           </div>
-          
+
           {/* Chapter metadata */}
           <div className="text-sm text-gray-500 flex items-center space-x-4">
-            <span>Chapter {currentChapterOrder || chapter.order}</span>
-            <span>Created: {new Date(chapter.createdAt).toLocaleDateString()}</span>
-            <span>Updated: {new Date(chapter.updatedAt).toLocaleDateString()}</span>
+            <span>Chapter {chapter.order}</span>
+            <span>
+              Created: {new Date(chapter.createdAt).toLocaleDateString()}
+            </span>
+            <span>
+              Updated: {new Date(chapter.updatedAt).toLocaleDateString()}
+            </span>
           </div>
         </div>
 

@@ -1,14 +1,14 @@
 {
   "name": "ink-and-keys",
   "version": "1.0.0",
-  "description": "A productivity and workflow tool for writers combining document creation with OCR functionality",
+  "description": "A productivity and workflow tool for writers combining document creation with OCR functionality and AI Image generation",
   "private": true,
   "workspaces": [
     "frontend",
     "backend"
   ],
   "scripts": {
-    "dev": "docker-compose up --build",
+    "dev": "docker compose up --build",
     "dev:frontend": "npm run dev --workspace=frontend",
     "dev:backend": "npm run dev --workspace=backend",
     "build": "npm run build --workspace=frontend && npm run build --workspace=backend",
