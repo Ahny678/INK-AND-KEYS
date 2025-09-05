@@ -1,149 +1,217 @@
-# Ink & Keys
+# 🚀 Ink & Keys - AI-Powered Writing Platform
 
-A productivity and workflow tool for writers combining document creation with OCR functionality.
+## ✨ Transform Your Writing with OCR, AI Image Generation, and Smart Document Management
 
-## Project Structure
+**Ink & Keys** is a comprehensive writing platform that combines document creation, OCR text extraction, and AI-powered image generation to streamline your writing workflow. Built with modern technologies including React, NestJS, and PostgreSQL, it provides authors, content creators, and writers with powerful tools to organize, create, and enhance their content.
 
-This is a monorepo containing both frontend and backend applications:
+## 🎯 Key Features
+
+- **📚 Book & Chapter Management** - Organize your writing into structured books with chapters
+- **🔍 Advanced OCR Processing** - Extract text from images and PDFs
+- **🎨 AI Image Generation** - Create custom cover images using Hugging Face AI models
+- **✍️ Rich Text Editor** - Professional writing experience with TipTap editor
+- **☁️ Cloud Storage** - Secure file management with Cloudinary integration
+- **🔐 User Authentication** - Secure JWT-based authentication system
+- **📱 Responsive Design** - Modern UI built with Tailwind CSS
+
+## 🏗️ Architecture Overview
 
 ```
-ink-and-keys/
-├── frontend/          # React + TypeScript + Vite frontend
-├── backend/           # NestJS + TypeScript backend
-├── docker-compose.yml # Development environment
-└── package.json       # Workspace configuration
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Frontend      │    │    Backend      │    │   Database      │
+│   (React + TS)  │◄──►│   (NestJS)      │◄──►│  (PostgreSQL)   │
+│                 │    │                 │    │                 │
+│ • Rich Editor   │    │ • REST API      │    │ • User Data     │
+│ • Book Manager  │    │ • OCR Service   │    │ • Books/Chapters│
+│ • File Upload   │    │ • AI Image Gen  │    │ • File Storage  │
+│ • Auth System   │    │ • File Process  │    │ • OCR Results   │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
 ```
 
-## Prerequisites
+## 🛠️ Technology Stack
 
-- Node.js 18+ 
-- npm 8+
-- Docker and Docker Compose (for development environment)
+### Frontend
 
-## Quick Start
+- **React 18** with TypeScript for type safety
+- **Tailwind CSS** for modern, responsive design
+- **TipTap** rich text editor for professional writing
+- **React Router** for navigation and routing
+- **Axios** for API communication
 
-### Development with Docker (Recommended)
+### Backend
 
-1. Clone the repository
-2. Copy environment variables:
+- **NestJS** framework with TypeScript
+- **Prisma ORM** for database management
+- **PostgreSQL** for data persistence
+- **JWT** for secure authentication
+- **Multer** for file upload handling
+
+### AI & Processing
+
+- **Tesseract.js** for OCR text extraction
+- **Hugging Face API** for AI image generation
+- **Sharp** for image preprocessing
+- **Cloudinary** for cloud file storage
+
+### Development & Deployment
+
+- **Docker Compose** for containerized development
+- **Vite** for fast frontend development
+- **Jest** for comprehensive testing
+- **ESLint & Prettier** for code quality
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- **Node.js** 18+ and npm
+- **Docker** and Docker Compose
+- **PostgreSQL** (or use Docker)
+
+### Environment Setup
+
+1. **Clone the repository**
+
    ```bash
-   cp .env.example .env
+   git clone git@github.com:Ahny678/INK-AND-KEYS.git
+   cd INK-AND-KEYS
    ```
-3. Start the development environment:
+
+2. **Set up environment variables**
+
    ```bash
+   # Backend environment
+   cp backend/.env.example backend/.env
+   ```
+
+3. **Configure required services**
+   ```bash
+   # Required environment variables for backend/.env:
+   DATABASE_URL=postgresql://postgres:postgres@localhost:5433/ink_and_keys
+   JWT_SECRET=your-secure-jwt-secret
+   HF_TOKEN=your-huggingface-token
+   CLOUDINARY_USER=your-cloudinary-username
+   CLOUDINARY_API_KEY=your-cloudinary-api-key
+   CLOUDINARY_API_SECRET=your-cloudinary-api-secret
+   ```
+
+### Installation & Running
+
+1. **Start with Docker (Recommended)**
+
+   ```bash
+   # Start all services
    npm run dev
+
+   # Access the application
+   Frontend: http://localhost:3000
+   Backend:  http://localhost:3001
    ```
 
-This will start:
-- PostgreSQL database on port 5433
-- Backend API on port 3001
-- Frontend application on port 3000
+2. **Manual setup (Alternative)**
 
-### Local Development
-
-1. Install dependencies:
    ```bash
+   # Install dependencies
    npm install
-   ```
 
-2. Start frontend and backend separately:
-   ```bash
-   # Terminal 1 - Backend
+   # Start backend
    npm run dev:backend
-   
-   # Terminal 2 - Frontend  
+
+   # Start frontend (in new terminal)
    npm run dev:frontend
    ```
 
-## Available Scripts
+3. **Database setup**
 
-### Root Level Commands
+   ```bash
+   # Generate Prisma client
+   npm run prisma:generate --workspace=backend
 
-- `npm run dev` - Start full development environment with Docker
-- `npm run build` - Build both frontend and backend
-- `npm run test` - Run tests for both applications
-- `npm run clean` - Clean up Docker containers and volumes
+   # Run migrations
+   npm run prisma:migrate --workspace=backend
+   ```
 
-### Frontend Commands
+## 📖 Usage Guide
 
-- `npm run dev:frontend` - Start frontend development server
-- `npm run build --workspace=frontend` - Build frontend for production
-- `npm run test --workspace=frontend` - Run frontend tests
+### Creating Your First Book
 
-### Backend Commands
+1. **Register/Login** to your account
+2. **Create a new book** with title and description
+3. **Add chapters** to organize your content
+4. **Use the rich text editor** to write your content
+5. **Generate AI cover images** for visual appeal
 
-- `npm run dev:backend` - Start backend development server
-- `npm run build --workspace=backend` - Build backend for production
-- `npm run test --workspace=backend` - Run backend tests
+### OCR Document Processing
 
-## Technology Stack
+1. **Upload images or PDFs** via the upload page
+2. **Wait for OCR processing** (progress indicator shows status)
+3. **Review extracted text** and edit as needed
+4. **Save as a new chapter** in your book
 
-### Frontend
-- **React 18** - UI framework
-- **TypeScript** - Type safety
-- **Vite** - Build tool and dev server
-- **Tailwind CSS** - Styling
-- **TipTap** - Rich text editor
-- **Vitest** - Testing framework
+## 🔧 Development
 
-### Backend
-- **NestJS** - Node.js framework
-- **TypeScript** - Type safety
-- **Prisma** - Database ORM
-- **PostgreSQL** - Database
-- **JWT** - Authentication
-- **Jest** - Testing framework
+### Project Structure
 
-### Development
-- **Docker Compose** - Development environment
-- **ESLint** - Code linting
-- **Prettier** - Code formatting
-
-## Environment Variables
-
-Copy `.env.example` to `.env` and configure:
-
-```env
-# Database
-DATABASE_URL=postgresql://postgres:postgres@localhost:5433/ink_and_keys
-
-# JWT
-JWT_SECRET=your-jwt-secret-key-change-in-production
-JWT_EXPIRES_IN=15m
-
-# Server
-PORT=3001
-NODE_ENV=development
-
-# Frontend
-VITE_API_URL=http://localhost:3001
+```
+ink-and-keys/
+├── frontend/                 # React frontend application
+│   ├── src/
+│   │   ├── components/      # Reusable UI components
+│   │   ├── pages/          # Application pages
+│   │   ├── services/       # API service layer
+│   │   └── types/          # TypeScript type definitions
+│   └── package.json
+├── backend/                  # NestJS backend API
+│   ├── src/
+│   │   ├── auth/           # Authentication module
+│   │   ├── books/          # Book management
+│   │   ├── chapters/       # Chapter management
+│   │   ├── ocr/            # OCR processing service
+│   │   └── ai-image/       # AI image generation
+│   └── package.json
+├── docker-compose.yml        # Development environment
+└── package.json             # Root workspace configuration
 ```
 
-## Database
-
-The application uses PostgreSQL with Prisma ORM. Database migrations and schema are managed in `backend/prisma/`.
-
-### Database Commands
+### Available Scripts
 
 ```bash
-# Generate Prisma client
-npm run prisma:generate --workspace=backend
+# Development
+npm run dev              # Start all services with Docker
+npm run dev:frontend     # Start frontend only
+npm run dev:backend      # Start backend only
 
-# Run migrations
-npm run prisma:migrate --workspace=backend
+# Building
+npm run build            # Build both frontend and backend
+npm run test             # Run tests for both projects
 
-# Open Prisma Studio
-npm run prisma:studio --workspace=backend
+# Database
+npm run prisma:generate  # Generate Prisma client
+npm run prisma:migrate   # Run database migrations
+
+
+# Cleanup
+npm run clean            # Stop Docker services and cleanup
 ```
 
-## Contributing
+## 📄 License
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Run tests: `npm run test`
-5. Submit a pull request
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## License
+## 🤝 Support
 
-MIT
+- **Documentation**: [Project Wiki](https://github.com/yourusername/ink-and-keys/wiki)
+- **Issues**: [GitHub Issues](https://github.com/yourusername/ink-and-keys/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/yourusername/ink-and-keys/discussions)
+
+## 🔗 Related Resources
+
+- [TipTap Editor](https://tiptap.dev/) - Rich text editor framework
+- [NestJS](https://nestjs.com/) - Progressive Node.js framework
+- [Prisma](https://www.prisma.io/) - Next-generation ORM
+- [Tesseract.js](https://tesseract.projectnaptha.com/) - OCR library
+- [HuggingFace Interference API](https://huggingface.co/Qwen/Qwen-Image) - Qwen-Image API
+
+---
+
+**Built with ❤️ for writers and content creators everywhere**
