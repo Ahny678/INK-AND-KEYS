@@ -80,24 +80,15 @@
 2. **Set up environment variables**
 
    ```bash
-   # Backend environment
+   # backend environment
    cp backend/.env.example backend/.env
-   ```
-
-3. **Configure required services**
-   ```bash
-   # Required environment variables for backend/.env:
-   DATABASE_URL=postgresql://postgres:postgres@localhost:5433/ink_and_keys
-   JWT_SECRET=your-secure-jwt-secret
-   HF_TOKEN=your-huggingface-token
-   CLOUDINARY_USER=your-cloudinary-username
-   CLOUDINARY_API_KEY=your-cloudinary-api-key
-   CLOUDINARY_API_SECRET=your-cloudinary-api-secret
+   # frontend environment
+   cp frontend/.env.example frontend/.env
    ```
 
 ### Installation & Running
 
-1. **Start with Docker (Recommended)**
+1. **Start with Docker**
 
    ```bash
    # Start all services
@@ -108,20 +99,7 @@
    Backend:  http://localhost:3001
    ```
 
-2. **Manual setup (Alternative)**
-
-   ```bash
-   # Install dependencies
-   npm install
-
-   # Start backend
-   npm run dev:backend
-
-   # Start frontend (in new terminal)
-   npm run dev:frontend
-   ```
-
-3. **Database setup**
+2. **Database setup(If you edit backend/prisma/schema.prisma)**
 
    ```bash
    # Generate Prisma client
@@ -178,12 +156,9 @@ ink-and-keys/
 ```bash
 # Development
 npm run dev              # Start all services with Docker
-npm run dev:frontend     # Start frontend only
-npm run dev:backend      # Start backend only
 
 # Building
 npm run build            # Build both frontend and backend
-npm run test             # Run tests for both projects
 
 # Database
 npm run prisma:generate  # Generate Prisma client
@@ -197,12 +172,6 @@ npm run clean            # Stop Docker services and cleanup
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🤝 Support
-
-- **Documentation**: [Project Wiki](https://github.com/yourusername/ink-and-keys/wiki)
-- **Issues**: [GitHub Issues](https://github.com/yourusername/ink-and-keys/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/ink-and-keys/discussions)
 
 ## 🔗 Related Resources
 
